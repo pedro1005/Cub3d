@@ -3,11 +3,11 @@
 
 #define ROWS 5
 #define COLS 5
-#define WALL_SIZE 64
+#define WALL_SIZE 60
 #define STEP_SIZE 5
 #define	FOV_ANGLE 120
-#define	FOV_WIDTH 320
-#define FOV_HEIGHT 640
+#define	FOV_WIDTH 800
+#define FOV_HEIGHT 600
 #define RED_COLOR "\033[31m"
 #define RESET_COLOR "\033[0m"
 
@@ -44,6 +44,7 @@ typedef struct s_game {
     void *win;
 	int	**map;
     t_player player;
+	struct s_texture *textures[4];
 } t_game;
 
 typedef enum e_walltexture
@@ -56,6 +57,15 @@ typedef enum e_walltexture
 	E_DIR
 } t_walltexture;
 
+typedef struct s_texture {
+    void    *img;       // Ponteiro para a imagem carregada pelo mlx
+    int     *data;      // Pixels da imagem
+    int     width;      // Largura da textura
+    int     height;     // Altura da textura
+    int     bpp;        // Bits por pixel
+    int     size_line;  // Tamanho da linha em bytes
+    int     endian;     // Endianess da imagem
+} t_texture;
 
 //map_utils
 void print_map(int **map, int rows, int cols);
