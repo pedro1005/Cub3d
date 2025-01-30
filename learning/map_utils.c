@@ -71,8 +71,8 @@ void expand_map(int **new_map, int **map)
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
             int value = map[i][j];
-            for (int r = i * EXPAND_SIZE; r < (i + 1) * EXPAND_SIZE; r++) {
-                for (int c = j * EXPAND_SIZE; c < (j + 1) * EXPAND_SIZE; c++) {
+            for (int r = i * WALL_SIZE; r < (i + 1) * WALL_SIZE; r++) {
+                for (int c = j * WALL_SIZE; c < (j + 1) * WALL_SIZE; c++) {
                     new_map[r][c] = value;
                 }
             }
@@ -82,7 +82,7 @@ void expand_map(int **new_map, int **map)
 
 void print_map(int **map, int rows, int cols) {
     for (int i = 0; i < rows; i++) {
-        for (int j = cols - 1; j >= 0; j--) {
+        for (int j = 0; j < cols; j++) {
             if (map[i][j] == 5)
                 printf(RED_COLOR "5 " RESET_COLOR);
             else
@@ -92,7 +92,7 @@ void print_map(int **map, int rows, int cols) {
     }
 }
 
-void enum_walls(int **map)
+/*void enum_walls(int **map)
 {
     int x;
     int y;
@@ -121,5 +121,5 @@ void enum_walls(int **map)
         }
         y++;
     }
-}
+}*/
 

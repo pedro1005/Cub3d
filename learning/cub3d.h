@@ -3,8 +3,11 @@
 
 #define ROWS 5
 #define COLS 5
-#define EXPAND_SIZE 30
-#define STEP_SIZE 15
+#define WALL_SIZE 64
+#define STEP_SIZE 5
+#define	FOV_ANGLE 120
+#define	FOV_WIDTH 320
+#define FOV_HEIGHT 640
 #define RED_COLOR "\033[31m"
 #define RESET_COLOR "\033[0m"
 
@@ -13,23 +16,45 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct s_fov
+{
+	int	dist;
+	int	wall_texture;
+} t_fov;
+
 typedef struct s_player
 {
-	int     pos_x;
-	int     pos_y;
-	float   dir;
+	//player's position in original grid
+	int		pos_x;
+	int		pos_y;
+	//player's virtual position
+	int		virtual_x;
+	int		virtual_y;
+	//player's direction
+	int		dir;
+	//Field of view (FOV)
+	struct s_fov	plane[FOV_ANGLE];
+	//last ray hit (enum t_walltexture)
+	int		last_hit;
 	
 } t_player;
 
-typedef enum e_wall
+typedef struct s_game {
+    void *mlx;
+    void *win;
+	int	**map;
+    t_player player;
+} t_game;
+
+typedef enum e_walltexture
 {
 	FLOOR,
-	N_WALL,
-	S_WALL,
-	E_WALL,
-	W_WALL,
-	PLAYER_INIT
-} t_wall;
+	WALL,
+	N_DIR,
+	S_DIR,
+	W_DIR,
+	E_DIR
+} t_walltexture;
 
 
 //map_utils
@@ -39,7 +64,7 @@ void free_map(int **map, int rows);
 int **alloc_map(int rows, int cols);
 int get_ylen(int **map);
 int get_xlen(int **map);
-void    enum_walls(int **map);
+//void    enum_walls(int **map);
 
 
 //player

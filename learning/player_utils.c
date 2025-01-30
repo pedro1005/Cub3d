@@ -54,5 +54,5 @@ int move_player(t_player *player, int **map)
 void    print_player(const t_player *player)
 {
     printf("Player Position: (%d, %d)\n", player->pos_x, player->pos_y);
-    printf("Direction: (%.2f)º\n", player->dir);
+    printf("Direction: (%d)º\n", player->dir);
 }
