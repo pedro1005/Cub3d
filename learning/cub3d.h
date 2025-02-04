@@ -1,13 +1,13 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-#define ROWS 5
-#define COLS 5
-#define WALL_SIZE 60
-#define STEP_SIZE 5
-#define	FOV_ANGLE 120
-#define	FOV_WIDTH 800
-#define FOV_HEIGHT 600
+#define ROWS 7
+#define COLS 7
+#define WALL_SIZE 64
+#define STEP_SIZE 10
+#define	FOV_ANGLE 100
+#define	FOV_WIDTH 1024
+#define FOV_HEIGHT 512
 #define RED_COLOR "\033[31m"
 #define RESET_COLOR "\033[0m"
 
@@ -18,9 +18,20 @@
 
 typedef struct s_fov
 {
-	int	dist;
+	float	dist;
 	int	wall_texture;
+	int	pos_hit;
 } t_fov;
+
+typedef struct s_img
+{
+    void    *ptr;  // Pointer to the MLX image
+    char    *addr; // Address of image data
+    int     bits_per_pixel;
+    int     line_length;
+    int     endian;
+}   t_img;
+
 
 typedef struct s_player
 {
@@ -36,6 +47,7 @@ typedef struct s_player
 	struct s_fov	plane[FOV_ANGLE];
 	//last ray hit (enum t_walltexture)
 	int		last_hit;
+	int		pos_hit;
 	
 } t_player;
 
@@ -45,6 +57,7 @@ typedef struct s_game {
 	int	**map;
     t_player player;
 	struct s_texture *textures[4];
+	t_img	img;
 } t_game;
 
 typedef enum e_walltexture

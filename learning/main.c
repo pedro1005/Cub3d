@@ -5,8 +5,8 @@
 #include <math.h>
 
 // Calcula a distância do raio (player -> parede)
-int ft_get_ray_dist(int angle, t_player *player, int **map) {
-    int dist = 0;
+float ft_get_ray_dist(int angle, t_player *player, int **map) {
+    float dist = 0;
     int x_dist, y_dist;
     int temp_x = player->pos_x;
     int temp_y = player->pos_y;
@@ -129,13 +129,16 @@ int ft_get_ray_dist(int angle, t_player *player, int **map) {
             return 0; // Invalid angle
         }
     }
+    if (player->last_hit == N_DIR || player->last_hit == S_DIR) player->pos_hit = temp_vx;
+    else
+        player->pos_hit = temp_vy;
     return dist;
 }
 
 
 // Calcula as propriedades de um raio
 t_fov ft_get_ray(int angle, t_player *player, int **map) {
-    t_fov ray = {.dist = 0, .wall_texture = 0};
+    t_fov ray = {.dist = 0, .wall_texture = 0, .pos_hit = 0};
     int dir = 0;
 
     if (angle > 360)
@@ -148,9 +151,11 @@ t_fov ft_get_ray(int angle, t_player *player, int **map) {
         dir = angle - player->dir;
     ray.dist = ft_get_ray_dist(angle, player, map) * cos(dir * (M_PI / 180));
 
-    printf("angle: %d || dist: %d\n", angle, ray.dist);
+    //printf("angle: %d || dist: %d\n", angle, ray.dist);
     ray.wall_texture = player->last_hit;
+    ray.pos_hit = player->pos_hit;
     player->last_hit = 0;
+    player->pos_hit = 0;
 
     return ray;
 }
@@ -160,7 +165,7 @@ void ft_build_fov(t_player *player, int **map) {
     int i = 0;
     int angle = player->dir + (FOV_ANGLE / 2); // Abre o FOV a partir da direção do jogador
 
-    printf("START!\n");
+    //printf("START!\n");
     while (i < FOV_ANGLE) {
         player->plane[i] = ft_get_ray(angle, player, map);
         angle--;
@@ -194,11 +199,14 @@ t_texture *load_texture(void *mlx, char *path) {
     }
 
     tex->data = (int *)mlx_get_data_addr(tex->img, &tex->bpp, &tex->size_line, &tex->endian);
+    //printf("Texture Loaded: %s\nWidth: %d, Height: %d, BPP: %d, Line Size: %d, Endian: %d\n", path, tex->width, tex->height, tex->bpp, tex->size_line, tex->endian);
+
     return tex;
 }
 
 int get_pixel_color(t_texture *tex, int x, int y) {
     if (!tex || x < 0 || y < 0 || x >= tex->width || y >= tex->height) return 0x000000;
+        //return *(int *)(tex->data + (y * tex->size_line + x * (tex->bpp / 8)));
     return tex->data[y * (tex->size_line / 4) + x];
 }
 
@@ -210,9 +218,99 @@ t_texture *get_texture(t_game *game, int texture_id) {
     return NULL;
 }
 
+void clear_image(t_game *game, int color)
+{
+    int x, y;
+    char *pixel;
+
+    for (y = 0; y < FOV_HEIGHT; y++)
+    {
+        for (x = 0; x < FOV_WIDTH; x++)
+        {
+            pixel = game->img.addr + (int)(y * game->img.line_length + x * (game->img.bits_per_pixel / 8));
+            *(unsigned int*)pixel = color;
+        }
+    }
+}
+
+// Interpolação suave com consideração da posição exata do impacto
+int blend_colors(int color1, int color2, float weight)
+{
+    int r1 = (color1 >> 16) & 0xFF;
+    int g1 = (color1 >> 8) & 0xFF;
+    int b1 = color1 & 0xFF;
+
+    int r2 = (color2 >> 16) & 0xFF;
+    int g2 = (color2 >> 8) & 0xFF;
+    int b2 = color2 & 0xFF;
+
+    int r = r1 + (r2 - r1) * weight;
+    int g = g1 + (g2 - g1) * weight;
+    int b = b1 + (b2 - b1) * weight;
+
+    return (r << 16) | (g << 8) | b;
+}
+
+void draw_rays(t_game *game, t_player *player)
+{
+    int i, x, y;
+    int line_height, start_y, end_y;
+    int tex_x, tex_y, tex_y_next;
+    float distance;
+    char *pixel;
+    t_texture *tex;
+
+    clear_image(game, 0x000000);  // Limpar imagem antes de desenhar
+
+    for (i = 0; i < FOV_WIDTH; i++)
+    {
+        x = (i * FOV_ANGLE) / FOV_WIDTH;
+        distance = player->plane[x].dist;
+
+        if (distance < 0.1f) distance = 0.1f;
+
+        line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance);
+        start_y = (FOV_HEIGHT - line_height) / 2;
+        end_y = start_y + line_height;
+
+        if (start_y < 0) start_y = 0;
+        if (end_y >= FOV_HEIGHT) end_y = FOV_HEIGHT - 1;
+
+        tex = get_texture(game, player->plane[x].wall_texture);
+        if (!tex) continue;
+
+        tex_x = (int)(player->plane[x].pos_hit % tex->width);
+
+        // Evitar o problema de "stairs" ajustando o cálculo de tex_y com interpolação bilinear
+        for (y = start_y; y < end_y; y++)
+        {
+            // Interpolação entre os pontos da textura (vertical)
+            float tex_y_f = ((float)(y - start_y) * tex->height) / line_height;
+            tex_y = (int)tex_y_f;
+            tex_y_next = tex_y + 1;
+
+            if (tex_y_next >= tex->height) tex_y_next = tex->height - 1;
+
+            // Usar a interpolação para as cores
+            int color1 = get_pixel_color(tex, tex_x, tex_y);
+            int color2 = get_pixel_color(tex, tex_x, tex_y_next);
+
+            // Peso para interpolação
+            float weight = tex_y_f - tex_y;
+            int final_color = blend_colors(color1, color2, weight);
+
+            // Definir o pixel na imagem
+            pixel = game->img.addr + (y * game->img.line_length + i * (game->img.bits_per_pixel / 8));
+            *(unsigned int*)pixel = final_color;
+        }
+    }
+
+    mlx_put_image_to_window(game->mlx, game->win, game->img.ptr, 0, 0);
+}
 
 
-void draw_rays(t_game *game, t_player *player) {
+
+/*void draw_rays(t_game *game, t_player *player) {
     for (int i = 0; i < FOV_WIDTH; i++) {
         int x = (i * FOV_ANGLE) / FOV_WIDTH;
         float distance = player->plane[x].dist;
@@ -231,7 +329,7 @@ void draw_rays(t_game *game, t_player *player) {
         if (!tex) continue;
 
         // Coordenada X na textura (depende da posição do impacto)
-        int tex_x = (int)(player->plane[x].wall_texture * tex->width) % tex->width;
+        int tex_x = (int)(player->plane[x].pos_hit % tex->width);
 
         // Desenhar a parede com textura
         for (int y = start_y; y < end_y; y++) {
@@ -241,37 +339,7 @@ void draw_rays(t_game *game, t_player *player) {
             mlx_pixel_put(game->mlx, game->win, i, y, color);
         }
     }
-    /*for (int i = 0; i < FOV_WIDTH; i++) {
-        int x = ( i * FOV_ANGLE) / FOV_WIDTH;  // Supondo que FOV_WIDTH e o tamanho do array "plane" sejam equivalentes
-        float distance = player->plane[x].dist;
-
-        // Evita divisão por zero
-        if (distance < 0.1f) distance = 0.1f;
-
-        int line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance); // Inverso da distância para efeito 3D
-        int start_y = (FOV_HEIGHT - line_height) / 2;
-        int end_y = start_y + line_height;
-
-        // Limita os valores para não desenhar fora da tela
-        if (start_y < 0) start_y = 0;
-        if (end_y >= FOV_HEIGHT) end_y = FOV_HEIGHT - 1;
-
-        // Determinar cor com base na textura do mapa
-        int color;
-        switch (player->plane[x].wall_texture) {
-            case 2: color = 0x00FF00; break; // Verde
-            case 3: color = 0x0000FF; break; // Azul
-            case 4: color = 0xFF0000; break; // Vermelho
-            case 5: color = 0xFFFF00; break; // Amarelo
-            default: color = 0xFFFFFF; break; // Branco (padrão)
-        }
-
-        // Desenhar a linha vertical do raio
-        for (int y = start_y; y < end_y; y++) {
-            mlx_pixel_put(game->mlx, game->win, i, y, color);
-        }
-    }*/
-}
+}*/
 
 
 int key_hook(int keycode, t_game *game) {
@@ -314,18 +382,23 @@ int main() {
     t_game game;
     game.mlx = mlx_init();
     game.win = mlx_new_window(game.mlx, FOV_WIDTH, FOV_HEIGHT, "Raycasting Test");
-    game.textures[0] = load_texture(game.mlx, "42_EA.xpm");
+    game.img.ptr = mlx_new_image(game.mlx, FOV_WIDTH, FOV_HEIGHT);
+    game.img.addr = mlx_get_data_addr(game.img.ptr, &game.img.bits_per_pixel,
+                                       &game.img.line_length, &game.img.endian);
+    game.textures[0] = load_texture(game.mlx, "N.xpm");
     game.textures[1] = load_texture(game.mlx, "42_NO.xpm");
     game.textures[2] = load_texture(game.mlx, "42_SO.xpm");
     game.textures[3] = load_texture(game.mlx, "42_WE.xpm");
 
     
     int original_map[ROWS][COLS] = {
-        {1, 1, 1, 1, 1},
-        {1, 0, 0, 0, 1},
-        {1, 0, 0, 0, 1},
-        {1, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1}
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1}
     };
     int **map = alloc_map(ROWS, COLS);
     for (int i = 0; i < ROWS; i++) {
