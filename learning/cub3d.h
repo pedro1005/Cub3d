@@ -3,9 +3,9 @@
 
 #define ROWS 7
 #define COLS 7
-#define WALL_SIZE 64
+#define WALL_SIZE 128
 #define STEP_SIZE 10
-#define	FOV_ANGLE 100
+#define	FOV_ANGLE 90
 #define	FOV_WIDTH 1024
 #define FOV_HEIGHT 512
 #define RED_COLOR "\033[31m"
@@ -19,8 +19,8 @@
 typedef struct s_fov
 {
 	float	dist;
-	int	wall_texture;
-	int	pos_hit;
+	int		wall_texture;
+	float	pos_hit;
 } t_fov;
 
 typedef struct s_img
@@ -39,15 +39,15 @@ typedef struct s_player
 	int		pos_x;
 	int		pos_y;
 	//player's virtual position
-	int		virtual_x;
-	int		virtual_y;
+	float		virtual_x;
+	float		virtual_y;
 	//player's direction
 	int		dir;
 	//Field of view (FOV)
 	struct s_fov	plane[FOV_ANGLE];
 	//last ray hit (enum t_walltexture)
 	int		last_hit;
-	int		pos_hit;
+	float		pos_hit;
 	
 } t_player;
 

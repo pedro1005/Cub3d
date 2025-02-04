@@ -1,5 +1,5 @@
 #include "cub3d.h"
-#include "../mlx/mlx.h"
+#include "./mlx/mlx.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -7,11 +7,11 @@
 // Calcula a distância do raio (player -> parede)
 float ft_get_ray_dist(int angle, t_player *player, int **map) {
     float dist = 0;
-    int x_dist, y_dist;
+    float x_dist, y_dist;
     int temp_x = player->pos_x;
     int temp_y = player->pos_y;
-    int temp_vx = player->virtual_x - (player->pos_x * WALL_SIZE);
-    int temp_vy = player->virtual_y - (player->pos_y * WALL_SIZE);
+    float temp_vx = player->virtual_x - (player->pos_x * WALL_SIZE);
+    float temp_vy = player->virtual_y - (player->pos_y * WALL_SIZE);
 
     while (player->last_hit == 0)
     {
@@ -126,6 +126,7 @@ float ft_get_ray_dist(int angle, t_player *player, int **map) {
             temp_vy -= x_dist * sin(rad);
             if (map[temp_y][temp_x] == 1) player->last_hit = E_DIR;
         }} else {
+            printf("%d: invalid angle\n", angle);
             return 0; // Invalid angle
         }
     }
@@ -151,7 +152,6 @@ t_fov ft_get_ray(int angle, t_player *player, int **map) {
         dir = angle - player->dir;
     ray.dist = ft_get_ray_dist(angle, player, map) * cos(dir * (M_PI / 180));
 
-    //printf("angle: %d || dist: %d\n", angle, ray.dist);
     ray.wall_texture = player->last_hit;
     ray.pos_hit = player->pos_hit;
     player->last_hit = 0;
@@ -164,8 +164,8 @@ t_fov ft_get_ray(int angle, t_player *player, int **map) {
 void ft_build_fov(t_player *player, int **map) {
     int i = 0;
     int angle = player->dir + (FOV_ANGLE / 2); // Abre o FOV a partir da direção do jogador
+    if (angle > 360) angle -= 360;
 
-    //printf("START!\n");
     while (i < FOV_ANGLE) {
         player->plane[i] = ft_get_ray(angle, player, map);
         angle--;
@@ -179,9 +179,9 @@ void ft_build_fov(t_player *player, int **map) {
 
 // Inicializa o jogador
 void ft_player_init(t_player *player, int **map) {
-    player->pos_x = 2;
-    player->pos_y = 2;
-    player->dir = 90;
+    player->pos_x = 1;
+    player->pos_y = 5;
+    player->dir = 70;
     player->virtual_x = player->pos_x * WALL_SIZE + (WALL_SIZE / 2);
     player->virtual_y = player->pos_y * WALL_SIZE + (WALL_SIZE / 2);
     player->last_hit = 0;
@@ -197,24 +197,20 @@ t_texture *load_texture(void *mlx, char *path) {
         free(tex);
         return NULL;
     }
-
     tex->data = (int *)mlx_get_data_addr(tex->img, &tex->bpp, &tex->size_line, &tex->endian);
-    //printf("Texture Loaded: %s\nWidth: %d, Height: %d, BPP: %d, Line Size: %d, Endian: %d\n", path, tex->width, tex->height, tex->bpp, tex->size_line, tex->endian);
-
     return tex;
 }
 
 int get_pixel_color(t_texture *tex, int x, int y) {
     if (!tex || x < 0 || y < 0 || x >= tex->width || y >= tex->height) return 0x000000;
-        //return *(int *)(tex->data + (y * tex->size_line + x * (tex->bpp / 8)));
     return tex->data[y * (tex->size_line / 4) + x];
 }
 
 t_texture *get_texture(t_game *game, int texture_id) {
-    if (texture_id == 2) return game->textures[0];  // Exemplo: textura 2
-    if (texture_id == 3) return game->textures[1];  // Exemplo: textura 3
-    if (texture_id == 4) return game->textures[2];  // Exemplo: textura 4
-    if (texture_id == 5) return game->textures[3];  // Exemplo: textura 5
+    if (texture_id == 2) return game->textures[0];
+    if (texture_id == 3) return game->textures[1];
+    if (texture_id == 4) return game->textures[2];
+    if (texture_id == 5) return game->textures[3];
     return NULL;
 }
 
@@ -250,58 +246,114 @@ int blend_colors(int color1, int color2, float weight)
 
     return (r << 16) | (g << 8) | b;
 }
-
+/*
 void draw_rays(t_game *game, t_player *player)
 {
     int i, x, y;
     int line_height, start_y, end_y;
-    int tex_x, tex_y, tex_y_next;
     float distance;
     char *pixel;
-    t_texture *tex;
+    int wall_color;
 
-    clear_image(game, 0x000000);  // Limpar imagem antes de desenhar
+    clear_image(game, 0x000000);  // Clear image before drawing
+    printf("player->dir: %d\n", player->dir);
 
     for (i = 0; i < FOV_WIDTH; i++)
     {
         x = (i * FOV_ANGLE) / FOV_WIDTH;
+        
+
         distance = player->plane[x].dist;
+        //corrected_distance = distance;  // Correct fish-eye effect
 
-        if (distance < 0.1f) distance = 0.1f;
+        if (x != (i - 1) * FOV_ANGLE / FOV_WIDTH)
+        {
+            line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance);
+            printf("x: %d, line_h: %d, dist: %f\n", x, line_height, player->plane[x].dist);
+        }
+        else
+            line_height = 0;
 
-        line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance);
         start_y = (FOV_HEIGHT - line_height) / 2;
         end_y = start_y + line_height;
 
         if (start_y < 0) start_y = 0;
         if (end_y >= FOV_HEIGHT) end_y = FOV_HEIGHT - 1;
 
-        tex = get_texture(game, player->plane[x].wall_texture);
-        if (!tex) continue;
+        // Determine wall color based on wall_texture
+        switch (player->plane[x].wall_texture) {
+            case 5: wall_color = 0xFF0000; break; // Red
+            case 2: wall_color = 0x0000FF; break; // Blue
+            case 3: wall_color = 0x00FF00; break; // Green
+            case 4: wall_color = 0xFFFF00; break; // Yellow
+            default: wall_color = 0xFFFFFF; break; // White (fallback)
+        }
+        float shade_factor = 1.0f / (1.0f + player->plane[x].pos_hit * 0.05f);
+        if (shade_factor < 0.2f) shade_factor = 0.2f;  // Prevent complete darkness
 
-        tex_x = (int)(player->plane[x].pos_hit % tex->width);
+        // Adjust RGB values
+        int r = ((wall_color >> 16) & 0xFF) * shade_factor;
+        int g = ((wall_color >> 8) & 0xFF) * shade_factor;
+        int b = (wall_color & 0xFF) * shade_factor;
 
-        // Evitar o problema de "stairs" ajustando o cálculo de tex_y com interpolação bilinear
+        wall_color = (r << 16) | (g << 8) | b;
+
+        // Draw solid color instead of texture
         for (y = start_y; y < end_y; y++)
         {
-            // Interpolação entre os pontos da textura (vertical)
-            float tex_y_f = ((float)(y - start_y) * tex->height) / line_height;
-            tex_y = (int)tex_y_f;
-            tex_y_next = tex_y + 1;
-
-            if (tex_y_next >= tex->height) tex_y_next = tex->height - 1;
-
-            // Usar a interpolação para as cores
-            int color1 = get_pixel_color(tex, tex_x, tex_y);
-            int color2 = get_pixel_color(tex, tex_x, tex_y_next);
-
-            // Peso para interpolação
-            float weight = tex_y_f - tex_y;
-            int final_color = blend_colors(color1, color2, weight);
-
-            // Definir o pixel na imagem
             pixel = game->img.addr + (y * game->img.line_length + i * (game->img.bits_per_pixel / 8));
-            *(unsigned int*)pixel = final_color;
+            *(unsigned int*)pixel = wall_color;
+        }
+    }
+
+    mlx_put_image_to_window(game->mlx, game->win, game->img.ptr, 0, 0);
+}*/
+
+void draw_rays(t_game *game, t_player *player) {
+    int i, x, y;
+    int line_height, start_y, end_y;
+    float distance;
+    int wall_color;
+    t_texture *texture;
+    int tex_x, tex_y;
+    float tex_step, tex_pos;
+
+    clear_image(game, 0x000000);  // Clear the screen
+
+    for (i = 0; i < FOV_WIDTH; i++) {
+        x = (i * FOV_ANGLE) / FOV_WIDTH;
+        distance = player->plane[x].dist;
+        line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance);
+
+        start_y = (FOV_HEIGHT - line_height) / 2;
+        end_y = start_y + line_height;
+        if (start_y < 0) start_y = 0;
+        if (end_y >= FOV_HEIGHT) end_y = FOV_HEIGHT - 1;
+
+        // Get the appropriate texture
+        texture = get_texture(game, player->plane[x].wall_texture);
+        if (!texture) continue;
+
+        // Determine texture X coordinate based on last_hit
+       
+            tex_x = (int)(player->plane[x].pos_hit * texture->width / WALL_SIZE);
+      
+
+        tex_x = tex_x % texture->width;  // Ensure within bounds
+
+        // Vertical texture mapping
+        tex_step = (float)texture->height / line_height;
+        tex_pos = (start_y - FOV_HEIGHT / 2 + line_height / 2) * tex_step;
+
+        for (y = start_y; y < end_y; y++) {
+            tex_y = (int)tex_pos & (texture->height - 1);  // Wrap around texture height
+            tex_pos += tex_step;
+
+            wall_color = get_pixel_color(texture, tex_x, tex_y);
+
+            // Draw the pixel
+            char *pixel = game->img.addr + (y * game->img.line_length + i * (game->img.bits_per_pixel / 8));
+            *(unsigned int *)pixel = wall_color;
         }
     }
 
@@ -310,40 +362,11 @@ void draw_rays(t_game *game, t_player *player)
 
 
 
-/*void draw_rays(t_game *game, t_player *player) {
-    for (int i = 0; i < FOV_WIDTH; i++) {
-        int x = (i * FOV_ANGLE) / FOV_WIDTH;
-        float distance = player->plane[x].dist;
-
-        if (distance < 0.1f) distance = 0.1f;
-
-        int line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance);
-        int start_y = (FOV_HEIGHT - line_height) / 2;
-        int end_y = start_y + line_height;
-
-        if (start_y < 0) start_y = 0;
-        if (end_y >= FOV_HEIGHT) end_y = FOV_HEIGHT - 1;
-
-        // Obter a textura correta baseado no tipo da parede
-        t_texture *tex = get_texture(game, player->plane[x].wall_texture);
-        if (!tex) continue;
-
-        // Coordenada X na textura (depende da posição do impacto)
-        int tex_x = (int)(player->plane[x].pos_hit % tex->width);
-
-        // Desenhar a parede com textura
-        for (int y = start_y; y < end_y; y++) {
-            int tex_y = ((y - start_y) * tex->height) / line_height;
-            int color = get_pixel_color(tex, tex_x, tex_y);
-
-            mlx_pixel_put(game->mlx, game->win, i, y, color);
-        }
-    }
-}*/
-
 
 int key_hook(int keycode, t_game *game) {
     t_player *player = &game->player;
+    //int rad = player->dir * (M_PI / 180);
+
     if (keycode == 65307) { // Escape key
         mlx_destroy_window(game->mlx, game->win);
         exit(0);
@@ -385,19 +408,19 @@ int main() {
     game.img.ptr = mlx_new_image(game.mlx, FOV_WIDTH, FOV_HEIGHT);
     game.img.addr = mlx_get_data_addr(game.img.ptr, &game.img.bits_per_pixel,
                                        &game.img.line_length, &game.img.endian);
-    game.textures[0] = load_texture(game.mlx, "N.xpm");
-    game.textures[1] = load_texture(game.mlx, "42_NO.xpm");
-    game.textures[2] = load_texture(game.mlx, "42_SO.xpm");
-    game.textures[3] = load_texture(game.mlx, "42_WE.xpm");
+    game.textures[0] = load_texture(game.mlx, "./textures/42_EA.xpm");
+    game.textures[1] = load_texture(game.mlx, "./textures/42_NO.xpm");
+    game.textures[2] = load_texture(game.mlx, "./textures/42_SO.xpm");
+    game.textures[3] = load_texture(game.mlx, "./textures/42_WE.xpm");
 
     
     int original_map[ROWS][COLS] = {
         {1, 1, 1, 1, 1, 1, 1},
         {1, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 1, 1},
+        {1, 0, 1, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 1},
         {1, 1, 1, 1, 1, 1, 1}
     };
     int **map = alloc_map(ROWS, COLS);
