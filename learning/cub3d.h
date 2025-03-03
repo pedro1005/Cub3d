@@ -3,11 +3,11 @@
 
 #define ROWS 7
 #define COLS 7
-#define WALL_SIZE 128
+#define WALL_SIZE 64
 #define STEP_SIZE 10
 #define	FOV_ANGLE 90
-#define	FOV_WIDTH 1024
-#define FOV_HEIGHT 512
+#define	FOV_WIDTH 1920
+#define FOV_HEIGHT 1080
 #define RED_COLOR "\033[31m"
 #define RESET_COLOR "\033[0m"
 
@@ -44,7 +44,7 @@ typedef struct s_player
 	//player's direction
 	int		dir;
 	//Field of view (FOV)
-	struct s_fov	plane[FOV_ANGLE];
+	struct s_fov	plane[FOV_WIDTH];
 	//last ray hit (enum t_walltexture)
 	int		last_hit;
 	float		pos_hit;

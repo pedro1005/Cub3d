@@ -5,7 +5,7 @@
 #include <math.h>
 
 // Calcula a distância do raio (player -> parede)
-float ft_get_ray_dist(int angle, t_player *player, int **map) {
+float ft_get_ray_dist(double angle, t_player *player, int **map) {
     float dist = 0;
     float x_dist, y_dist;
     int temp_x = player->pos_x;
@@ -126,7 +126,6 @@ float ft_get_ray_dist(int angle, t_player *player, int **map) {
             temp_vy -= x_dist * sin(rad);
             if (map[temp_y][temp_x] == 1) player->last_hit = E_DIR;
         }} else {
-            printf("%d: invalid angle\n", angle);
             return 0; // Invalid angle
         }
     }
@@ -138,19 +137,20 @@ float ft_get_ray_dist(int angle, t_player *player, int **map) {
 
 
 // Calcula as propriedades de um raio
-t_fov ft_get_ray(int angle, t_player *player, int **map) {
+t_fov ft_get_ray(double angle, t_player *player, int **map) {
     t_fov ray = {.dist = 0, .wall_texture = 0, .pos_hit = 0};
-    int dir = 0;
+    //int dir = 0;
 
     if (angle > 360)
         angle -= 360;
     else if (angle < 0)
         angle += 360;
-    if (player->dir > angle)
-        dir = player->dir - angle;
-    else if (player->dir < angle)
-        dir = angle - player->dir;
-    ray.dist = ft_get_ray_dist(angle, player, map) * cos(dir * (M_PI / 180));
+    //if (player->dir > angle)
+    //    dir = player->dir - angle;
+    //else if (player->dir < angle)
+    //    dir = angle - player->dir;
+    //ray.dist = ft_get_ray_dist(angle, player, map) * cos(dir * (M_PI / 180));
+    ray.dist = ft_get_ray_dist(angle, player, map);
 
     ray.wall_texture = player->last_hit;
     ray.pos_hit = player->pos_hit;
@@ -163,12 +163,13 @@ t_fov ft_get_ray(int angle, t_player *player, int **map) {
 // Constrói o campo de visão do jogador
 void ft_build_fov(t_player *player, int **map) {
     int i = 0;
-    int angle = player->dir + (FOV_ANGLE / 2); // Abre o FOV a partir da direção do jogador
+    double angle = player->dir + (FOV_ANGLE / 2.0); // Abre o FOV a partir da direção do jogador
+    double step = (double)FOV_ANGLE / (double)FOV_WIDTH;
     if (angle > 360) angle -= 360;
 
-    while (i < FOV_ANGLE) {
+    while (i < FOV_WIDTH) {
         player->plane[i] = ft_get_ray(angle, player, map);
-        angle--;
+        angle -=step;
         if (angle < 0)
             angle += 360;
         if (angle > 360)
@@ -249,9 +250,9 @@ int blend_colors(int color1, int color2, float weight)
 /*
 void draw_rays(t_game *game, t_player *player)
 {
-    int i, x, y;
+    int i, y;
     int line_height, start_y, end_y;
-    float distance;
+    float corrected_distance;
     char *pixel;
     int wall_color;
 
@@ -260,19 +261,16 @@ void draw_rays(t_game *game, t_player *player)
 
     for (i = 0; i < FOV_WIDTH; i++)
     {
-        x = (i * FOV_ANGLE) / FOV_WIDTH;
-        
+       
+        float angle_offset = (i - (FOV_WIDTH / 2)) * ((float)FOV_ANGLE / FOV_WIDTH);
+        corrected_distance = player->plane[i].dist * cos(angle_offset * (M_PI / 180.0)); // Convert to radians
 
-        distance = player->plane[x].dist;
-        //corrected_distance = distance;  // Correct fish-eye effect
+        if (corrected_distance < 0.01f) 
+            corrected_distance = 0.01f; // Prevent division by zero
 
-        if (x != (i - 1) * FOV_ANGLE / FOV_WIDTH)
-        {
-            line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance);
-            printf("x: %d, line_h: %d, dist: %f\n", x, line_height, player->plane[x].dist);
-        }
-        else
-            line_height = 0;
+        line_height = (int)(FOV_HEIGHT * WALL_SIZE / corrected_distance);
+
+        //line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance);
 
         start_y = (FOV_HEIGHT - line_height) / 2;
         end_y = start_y + line_height;
@@ -281,15 +279,15 @@ void draw_rays(t_game *game, t_player *player)
         if (end_y >= FOV_HEIGHT) end_y = FOV_HEIGHT - 1;
 
         // Determine wall color based on wall_texture
-        switch (player->plane[x].wall_texture) {
+        switch (player->plane[i].wall_texture) {
             case 5: wall_color = 0xFF0000; break; // Red
             case 2: wall_color = 0x0000FF; break; // Blue
             case 3: wall_color = 0x00FF00; break; // Green
             case 4: wall_color = 0xFFFF00; break; // Yellow
             default: wall_color = 0xFFFFFF; break; // White (fallback)
         }
-        float shade_factor = 1.0f / (1.0f + player->plane[x].pos_hit * 0.05f);
-        if (shade_factor < 0.2f) shade_factor = 0.2f;  // Prevent complete darkness
+        float shade_factor = 1.0f / (1.0f + corrected_distance * 0.05f);
+        if (shade_factor < 0.7f) shade_factor = 0.7f;  // Prevent complete darkness
 
         // Adjust RGB values
         int r = ((wall_color >> 16) & 0xFF) * shade_factor;
@@ -310,9 +308,8 @@ void draw_rays(t_game *game, t_player *player)
 }*/
 
 void draw_rays(t_game *game, t_player *player) {
-    int i, x, y;
+    int i, y;
     int line_height, start_y, end_y;
-    float distance;
     int wall_color;
     t_texture *texture;
     int tex_x, tex_y;
@@ -321,9 +318,10 @@ void draw_rays(t_game *game, t_player *player) {
     clear_image(game, 0x000000);  // Clear the screen
 
     for (i = 0; i < FOV_WIDTH; i++) {
-        x = (i * FOV_ANGLE) / FOV_WIDTH;
-        distance = player->plane[x].dist;
-        line_height = (int)(FOV_HEIGHT * WALL_SIZE / distance);
+    
+        float angle_offset = (i - (FOV_WIDTH / 2)) * ((float)FOV_ANGLE / FOV_WIDTH);
+        float corrected_distance = player->plane[i].dist * cos(angle_offset * (M_PI / 180.0)); // Convert to radians
+        line_height = (int)(FOV_HEIGHT * WALL_SIZE / corrected_distance);
 
         start_y = (FOV_HEIGHT - line_height) / 2;
         end_y = start_y + line_height;
@@ -331,12 +329,12 @@ void draw_rays(t_game *game, t_player *player) {
         if (end_y >= FOV_HEIGHT) end_y = FOV_HEIGHT - 1;
 
         // Get the appropriate texture
-        texture = get_texture(game, player->plane[x].wall_texture);
+        texture = get_texture(game, player->plane[i].wall_texture);
         if (!texture) continue;
 
         // Determine texture X coordinate based on last_hit
        
-            tex_x = (int)(player->plane[x].pos_hit * texture->width / WALL_SIZE);
+            tex_x = (int)(player->plane[i].pos_hit * texture->width / WALL_SIZE);
       
 
         tex_x = tex_x % texture->width;  // Ensure within bounds
