@@ -4,7 +4,7 @@ CFLAGS    = -Wall -Wextra -Werror -g3
 MLX_PATH  = mlx/
 MLX_NAME  = libmlx.a
 MLX       = $(MLX_PATH)$(MLX_NAME)
-SRC       = main.c map_utils.c player_utils.c
+SRC       = main.c map_utils.c player_utils.c hook.c image.c textures.c ray.c fov.c
 OBJ       = $(SRC:.c=.o)
 OBJ_PATH  = ./objects/
 OBJS      = $(addprefix $(OBJ_PATH), $(OBJ))

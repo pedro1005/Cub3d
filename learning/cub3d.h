@@ -6,8 +6,8 @@
 #define WALL_SIZE 64
 #define STEP_SIZE 10
 #define	FOV_ANGLE 90
-#define	FOV_WIDTH 1920
-#define FOV_HEIGHT 1080
+#define	FOV_WIDTH 1600
+#define FOV_HEIGHT 900
 #define RED_COLOR "\033[31m"
 #define RESET_COLOR "\033[0m"
 
@@ -15,6 +15,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "./mlx/mlx.h"
 
 typedef struct s_fov
 {
@@ -81,13 +82,30 @@ typedef struct s_texture {
 } t_texture;
 
 //map_utils
-void print_map(int **map, int rows, int cols);
-void expand_map(int **new_map, int **map);
-void free_map(int **map, int rows);
-int **alloc_map(int rows, int cols);
-int get_ylen(int **map);
-int get_xlen(int **map);
-//void    enum_walls(int **map);
+void	print_map(int **map, int rows, int cols);
+void	expand_map(int **new_map, int **map);
+void	free_map(int **map, int rows);
+int		**alloc_map(int rows, int cols);
+int		get_ylen(int **map);
+int		get_xlen(int **map);
+
+//Calculate ray's dist
+float	ft_get_ray_dist(double angle, t_player *player, int **map);
+t_fov	ft_get_ray(double angle, t_player *player, int **map);
+
+//Construct FOV
+void	ft_build_fov(t_player *player, int **map);
+
+//Textures
+t_texture   *load_texture(void *mlx, char *path);
+t_texture *get_texture(t_game *game, int texture_id);
+
+//Image
+int get_pixel_color(t_texture *tex, int x, int y);
+void draw_rays(t_game *game, t_player *player);
+
+//Key hook
+int key_hook(int keycode, t_game *game);
 
 
 //player

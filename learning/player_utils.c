@@ -34,23 +34,6 @@ int move_player(t_player *player, int **map)
     return 0;
 }
 
-
-
-/*void rotate_player(t_player *player, float angle)
-{
-    // Convert angle from degrees to radians
-    float radians = angle * (M_PI / 180.0);
-
-    // Save the current direction
-    float temp_dir_x = player->dir_x;
-
-    // Apply rotation formula
-    player->dir_x = player->dir_x * cos(radians) - player->dir_y * sin(radians);
-    player->dir_y = temp_dir_x * sin(radians) + player->dir_y * cos(radians);
-}*/
-
-
-
 void    print_player(const t_player *player)
 {
     printf("Player Position: (%d, %d)\n", player->pos_x, player->pos_y);
