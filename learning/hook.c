@@ -29,7 +29,7 @@ int key_hook(int keycode, t_game *game) {
     }
     else if (keycode == 65363) { // Right arrow (rotate right)
         player->dir -= 5;
-        if (player->dir < 360) player->dir += 360;
+        if (player->dir < 0) player->dir += 360;
         ft_build_fov(player, game->map);  // Recalculate FOV
         mlx_clear_window(game->mlx, game->win);
         draw_rays(game, player);

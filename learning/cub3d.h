@@ -53,12 +53,12 @@ typedef struct s_player
 } t_player;
 
 typedef struct s_game {
-    void *mlx;
-    void *win;
-	int	**map;
-    t_player player;
-	struct s_texture *textures[4];
-	t_img	img;
+    void 				*mlx;
+    void 				*win;
+	int					**map;
+    t_player			player;
+	struct s_texture	*textures[4];
+	t_img				img;
 } t_game;
 
 typedef enum e_walltexture
@@ -81,9 +81,16 @@ typedef struct s_texture {
     int     endian;     // Endianess da imagem
 } t_texture;
 
+typedef struct s_xypos
+{
+	int		temp_xy[2];
+	float	temp_v_xy[2];
+} t_xypos;
+
+
 //map_utils
-void	print_map(int **map, int rows, int cols);
-void	expand_map(int **new_map, int **map);
+//void	print_map(int **map, int rows, int cols);
+//void	expand_map(int **new_map, int **map);
 void	free_map(int **map, int rows);
 int		**alloc_map(int rows, int cols);
 int		get_ylen(int **map);
@@ -92,6 +99,13 @@ int		get_xlen(int **map);
 //Calculate ray's dist
 float	ft_get_ray_dist(double angle, t_player *player, int **map);
 t_fov	ft_get_ray(double angle, t_player *player, int **map);
+
+//Math
+float	calc_q_one(double angle, t_player *player, int **map, t_xypos *pos);
+float	calc_q_two(double angle, t_player *player, int **map, t_xypos *pos);
+float	calc_q_three(double angle, t_player *player, int **map, t_xypos *pos);
+float	calc_q_four(double angle, t_player *player, int **map, t_xypos *pos);
+float	calc_notables(double angle, t_player *player, int **map, t_xypos *pos);
 
 //Construct FOV
 void	ft_build_fov(t_player *player, int **map);
@@ -109,8 +123,8 @@ int key_hook(int keycode, t_game *game);
 
 
 //player
-int    move_player(t_player *player, int **map);
+//int    move_player(t_player *player, int **map);
 //void    rotate_player(t_player *player, float angle);
-void    print_player(const t_player *player);
+//void    print_player(const t_player *player);
 
 #endif

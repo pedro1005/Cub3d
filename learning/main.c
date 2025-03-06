@@ -62,8 +62,7 @@ int main()
     ft_player_init(&player, map);
     game.map = map;
     game.player = player;
-
-    draw_rays(&game, &player);
+    draw_rays(&game, &game.player);
     mlx_key_hook(game.win, key_hook, &game);
     mlx_loop(game.mlx);
     free_map(map, ROWS);

@@ -1,8 +1,10 @@
 #include "cub3d.h"
 
-int get_pixel_color(t_texture *tex, int x, int y) {
-    if (!tex || x < 0 || y < 0 || x >= tex->width || y >= tex->height) return 0x000000;
-    return tex->data[y * (tex->size_line / 4) + x];
+int get_pixel_color(t_texture *tex, int x, int y)
+{
+    if (!tex || x < 0 || y < 0 || x >= tex->width || y >= tex->height)
+        return (0x000000);
+    return (tex->data[y * (tex->size_line / 4) + x]);
 }
 
 void draw_rays(t_game *game, t_player *player) {
@@ -57,6 +59,5 @@ void draw_rays(t_game *game, t_player *player) {
             *(unsigned int *)pixel = wall_color;
         }
     }
-
     mlx_put_image_to_window(game->mlx, game->win, game->img.ptr, 0, 0);
 }
