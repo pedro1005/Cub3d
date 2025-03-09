@@ -4,7 +4,7 @@
 #define ROWS 7
 #define COLS 7
 #define WALL_SIZE 6400
-#define STEP_SIZE 100
+#define STEP_SIZE 1000
 #define	FOV_ANGLE 90
 #define	FOV_WIDTH 1600
 #define FOV_HEIGHT 900

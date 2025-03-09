@@ -38,10 +38,10 @@ int main()
     game.img.ptr = mlx_new_image(game.mlx, FOV_WIDTH, FOV_HEIGHT);
     game.img.addr = mlx_get_data_addr(game.img.ptr, &game.img.bits_per_pixel,
                                        &game.img.line_length, &game.img.endian);
-    game.textures[0] = load_texture(game.mlx, "./textures/real1.xpm");
-    game.textures[1] = load_texture(game.mlx, "./textures/real2.xpm");
-    game.textures[2] = load_texture(game.mlx, "./textures/real3.xpm");
-    game.textures[3] = load_texture(game.mlx, "./textures/real4.xpm");
+    game.textures[0] = load_texture(game.mlx, "./textures/paint.xpm");
+    game.textures[1] = load_texture(game.mlx, "./textures/paint2.xpm");
+    game.textures[2] = load_texture(game.mlx, "./textures/paint3.xpm");
+    game.textures[3] = load_texture(game.mlx, "./textures/paint4.xpm");
 
     
     int original_map[ROWS][COLS] = {
