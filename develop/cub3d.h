@@ -1,6 +1,10 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 5 
+# endif
+
 #define ROWS 7
 #define COLS 7
 #define WALL_SIZE 6400
@@ -17,6 +21,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "./mlx/mlx.h"
 
 typedef struct s_fov
@@ -26,6 +32,13 @@ typedef struct s_fov
 	float	pos_hit;
 } t_fov;
 
+typedef struct s_win
+{
+	int	height;
+	int	width;
+	int	**map;
+} t_win;
+
 typedef struct s_img
 {
     void    *ptr;  // Pointer to the MLX image
@@ -34,7 +47,6 @@ typedef struct s_img
     int     line_length;
     int     endian;
 }   t_img;
-
 
 typedef struct s_player
 {
@@ -58,6 +70,8 @@ typedef struct s_game {
     void 				*mlx;
     void 				*win;
 	int					**map;
+	int					map_rows;
+	int					map_cols;
     t_player			player;
 	struct s_texture	*textures[4];
 	t_img				img;
@@ -139,11 +153,16 @@ void	setup_wall_data(t_wall_data *wall,
 
 //Key hook
 int key_hook(int keycode, t_game *game);
-
-
+void    get_map_size(char *file_name, t_game *game);
+size_t	ft_strlen(const char *str);
+char	*get_next_line(int fd);
+void	map_insertion(int *matrix_row, char *line);
+void    populate_map(char *input, int **map);
 //player
 //int    move_player(t_player *player, int **map);
 //void    rotate_player(t_player *player, float angle);
 //void    print_player(const t_player *player);
-
+int	ft_atoi(const char *nptr);
+char	**ft_split(char const *s, char c);
+int	parser(char *input);
 #endif

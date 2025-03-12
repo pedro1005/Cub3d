@@ -2,67 +2,58 @@
 
 int get_xlen(int **map)
 {
-    int res = 0;
-    int i = 0;
+    int res;
+    int i;
 
-    // Check if map is NULL
-    if (!map)
-        return 0;
-
-    // Iterate through the map while both map[i] and map[i][0] are valid
-    while (map[i])
+    res = 0;
+    i = 0;
+    if (!map)                           // Check if map is NULL
+        return (0);
+    while (map[i])                      // Iterate through the map while both map[i] and map[i][0] are valid
     {
         res++;
         i++;
     }
-    return res;
+    return (res);
 }
 
-int get_ylen(int **map) {
-    int res = 0;
+int get_ylen(int **map)
+{
+    int res;
 
+    res = 0;
     if (!map || !map[0])
-        return 0;
-
-    // Count elements in the first row (assuming `map` is properly allocated)
-    while (map[0][res] != 0) {  // This assumes all values are initialized, but it should be bounds-checked.
+        return (0);
+    while (map[0][res] != 0)           // Count elements in the first row (assuming map is properly alloc). This assumes all values are initialized, but it the bounds should be checked.
         res++;
-    }
-
-    return res;
+    return (res);
 }
 
-
-int **alloc_map(int rows, int cols) {
-    // Allocate space for `rows` pointers
-    int **map = malloc((rows + 1) * sizeof(int *));
+int **alloc_map(int rows, int cols)
+{
+    int **map = malloc((rows + 1) * sizeof(int *));         // Allocate space for `rows` pointers
     if (!map)
-        return NULL;
-
-    for (int i = 0; i < rows; i++) {
+        return (NULL);
+    for (int i = 0; i < rows; i++)
+    {
         map[i] = malloc((cols + 1) * sizeof(int));
-        if (!map[i]) {
-            // Free previously allocated rows if malloc fails
-            for (int k = 0; k < i; k++) {
+        if (!map[i])                                        // Free previously allocated rows if malloc fails
+        {                              
+            for (int k = 0; k < i; k++)
                 free(map[k]);
-            }
             free(map);
-            return NULL;
+            return (NULL);
         }
-        memset(map[i], 0, (cols + 1) * sizeof(int));  // Initialize each row to 0
+        memset(map[i], 0, (cols + 1) * sizeof(int));        // Initialize each row to 0
     }
-    map[rows] = NULL;  // NULL terminate the array of pointers
-    return map;
+    map[rows] = NULL;                                       // NULL terminate the array of pointers
+    return (map);
 }
-
-
-
 
 void free_map(int **map, int rows)
 {
-    for (int i = 0; i < rows; i++) {
+    for (int i = 0; i < rows; i++)
         free(map[i]);
-    }
     free(map);
 }
 
@@ -122,4 +113,3 @@ void print_map(int **map, int rows, int cols) {
         y++;
     }
 }*/
-
