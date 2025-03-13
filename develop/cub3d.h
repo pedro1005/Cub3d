@@ -180,5 +180,7 @@ void    populate_map(char *input, int **map);
 //void    print_player(const t_player *player);
 int	ft_atoi(const char *nptr);
 char	**ft_split(char const *s, char c);
+//parser
+int	check_filename(char *file);
 int	parser(char *input);
 #endif

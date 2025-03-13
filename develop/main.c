@@ -48,8 +48,11 @@ int	main(int ac, char **av)
 	t_player	*player;
 	int			**map;
 
-	if (ac != 2 || parser(av[1]))
+	if (ac != 2 || !check_filename(av[1]))
+	{
 		printf("Error");
+		return (1);
+	}
 	game = (t_game *)malloc(sizeof(t_game));
 	if (!game)
 		exit(1);
