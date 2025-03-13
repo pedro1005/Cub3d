@@ -7,11 +7,11 @@
 
 #define ROWS 7
 #define COLS 7
-#define WALL_SIZE 6400
-#define STEP_SIZE WALL_SIZE / 20
-#define	FOV_ANGLE 90
-#define	FOV_WIDTH 1024
-#define FOV_HEIGHT 768
+#define WALL_SIZE 64
+#define STEP_SIZE WALL_SIZE / 50
+#define	FOV_ANGLE 60
+#define	FOV_WIDTH 800
+#define FOV_HEIGHT 600
 #define RED_COLOR "\033[31m"
 #define RESET_COLOR "\033[0m"
 #define SKY_COLOR 0x87CEEB
@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "./mlx/mlx.h"
+#include <X11/Xlib.h>
 
 typedef struct s_fov
 {
@@ -72,7 +73,7 @@ typedef struct s_game {
 	int					**map;
 	int					map_rows;
 	int					map_cols;
-    t_player			player;
+    t_player			*player;
 	struct s_texture	*textures[4];
 	t_img				img;
 	int					keys[7];
@@ -161,6 +162,7 @@ void	draw_wall_column(t_game *game, t_texture *texture,
 	int x, t_wall_data *wall);
 void	setup_wall_data(t_wall_data *wall,
 	t_texture *texture, float pos_hit, int line_height);
+int close_window(t_game *game);
 
 
 //Key hook

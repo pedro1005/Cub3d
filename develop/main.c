@@ -36,10 +36,10 @@ void	graph_handler(t_game *game)
 	game->img.ptr = mlx_new_image(game->mlx, FOV_WIDTH, FOV_HEIGHT);
 	game->img.addr = mlx_get_data_addr(game->img.ptr, &game->img.bits_per_pixel,
 			&game->img.line_length, &game->img.endian);
-	game->textures[0] = load_texture(game->mlx, "./textures/paint.xpm");
-	game->textures[1] = load_texture(game->mlx, "./textures/paint2.xpm");
-	game->textures[2] = load_texture(game->mlx, "./textures/paint3.xpm");
-	game->textures[3] = load_texture(game->mlx, "./textures/paint4.xpm");
+	game->textures[0] = load_texture(game->mlx, "./textures/color_stone.xpm");
+	game->textures[1] = load_texture(game->mlx, "./textures/eagle.xpm");
+	game->textures[2] = load_texture(game->mlx, "./textures/grey_stone.xpm");
+	game->textures[3] = load_texture(game->mlx, "./textures/mossy.xpm");
 }
 
 int	main(int ac, char **av)
@@ -62,12 +62,13 @@ int	main(int ac, char **av)
 	populate_map(av[1], map);
 	ft_player_init(player, map);
 	game->map = map;
-	game->player = *player;
-	draw_window(game, &game->player);
-	mlx_hook(game->win, 2, 1L<<0, key_press, game);   // Evento KeyPress
-    mlx_hook(game->win, 3, 1L<<1, key_release, game); // Evento KeyRelease
-    mlx_loop_hook(game->mlx, key_hook, game);        // Loop contínuo
+	game->player = player;
+	memset(game->keys, 0, sizeof(game->keys));
+	draw_window(game, game->player);
+	mlx_hook(game->win, 2, 1L<<0, key_press, game);
+    mlx_hook(game->win, 3, 1L<<1, key_release, game);
+	mlx_hook(game->win, 17, 0, close_window, game);
+    mlx_loop_hook(game->mlx, key_hook, game);
 	mlx_loop(game->mlx);
-	free_map(map, ROWS);
 	return (0);
 }
