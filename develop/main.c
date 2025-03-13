@@ -4,7 +4,7 @@ void	ft_player_init(t_player *player, int **map)
 {
 	player->pos_x = 1;
 	player->pos_y = 5;
-	player->dir = 70;
+	player->dir = 0;
 	player->virtual_x = player->pos_x * WALL_SIZE + (WALL_SIZE / 2);
 	player->virtual_y = player->pos_y * WALL_SIZE + (WALL_SIZE / 2);
 	player->last_hit = 0;
@@ -64,7 +64,9 @@ int	main(int ac, char **av)
 	game->map = map;
 	game->player = *player;
 	draw_window(game, &game->player);
-	mlx_key_hook(game->win, key_hook, game);
+	mlx_hook(game->win, 2, 1L<<0, key_press, game);   // Evento KeyPress
+    mlx_hook(game->win, 3, 1L<<1, key_release, game); // Evento KeyRelease
+    mlx_loop_hook(game->mlx, key_hook, game);        // Loop contínuo
 	mlx_loop(game->mlx);
 	free_map(map, ROWS);
 	return (0);

@@ -8,10 +8,10 @@
 #define ROWS 7
 #define COLS 7
 #define WALL_SIZE 6400
-#define STEP_SIZE 1000
+#define STEP_SIZE WALL_SIZE / 20
 #define	FOV_ANGLE 90
-#define	FOV_WIDTH 1600
-#define FOV_HEIGHT 900
+#define	FOV_WIDTH 1024
+#define FOV_HEIGHT 768
 #define RED_COLOR "\033[31m"
 #define RESET_COLOR "\033[0m"
 #define SKY_COLOR 0x87CEEB
@@ -75,6 +75,7 @@ typedef struct s_game {
     t_player			player;
 	struct s_texture	*textures[4];
 	t_img				img;
+	int					keys[7];
 } t_game;
 
 typedef enum e_walltexture
@@ -86,6 +87,17 @@ typedef enum e_walltexture
 	W_DIR,
 	E_DIR
 } t_walltexture;
+
+typedef enum e_keys
+{
+	KEY_FW,
+	KEY_BCK,
+	KEY_L,
+	KEY_R,
+	KEY_ROTATE_L,
+	KEY_ROTATE_R,
+	KEY_ESC
+} t_keys;
 
 typedef struct s_texture {
     void    *img;       // Ponteiro para a imagem carregada pelo mlx
@@ -152,7 +164,9 @@ void	setup_wall_data(t_wall_data *wall,
 
 
 //Key hook
-int key_hook(int keycode, t_game *game);
+int key_hook(t_game *game);
+int key_press(int keycode, t_game *game);
+int key_release(int keycode, t_game *game);
 void    get_map_size(char *file_name, t_game *game);
 size_t	ft_strlen(const char *str);
 char	*get_next_line(int fd);
