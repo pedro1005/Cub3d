@@ -40,7 +40,7 @@ double	get_rad(int dir, int key)
 	return (rad);
 }
 
-int	check_x_colition(float virt_x, int **map, t_player *player)
+int	check_x_collision(float virt_x, int **map, t_player *player)
 {
 	if (virt_x >= WALL_SIZE)
 	{

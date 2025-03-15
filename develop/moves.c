@@ -6,7 +6,7 @@ void	move_right(t_player *player, int **map)
 	const double	rad = get_rad(player->dir, KEY_R);
 
 	virt_xy_i = set_virt_xy(player, rad);
-	if (check_x_colition(virt_xy_i[0], map, player))
+	if (check_x_collision(virt_xy_i[0], map, player))
 		return ;
 	player->virtual_x += STEP_SIZE * cos(rad);
 	if (virt_xy_i[1] >= WALL_SIZE)
@@ -30,7 +30,7 @@ void	move_left(t_player *player, int **map)
 	const double	rad = get_rad(player->dir, KEY_L);
 
 	virt_xy_i = set_virt_xy(player, rad);
-	if (check_x_colition(virt_xy_i[0], map, player))
+	if (check_x_collision(virt_xy_i[0], map, player))
 		return ;
 	player->virtual_x += STEP_SIZE * cos(rad);
 	if (virt_xy_i[1] >= WALL_SIZE)
@@ -54,7 +54,7 @@ void	move_backward(t_player *player, int **map)
 	const double	rad = get_rad(player->dir, KEY_BCK);
 
 	virt_xy_i = set_virt_xy(player, rad);
-	if (check_x_colition(virt_xy_i[0], map, player))
+	if (check_x_collision(virt_xy_i[0], map, player))
 		return ;
 	player->virtual_x += STEP_SIZE * cos(rad);
 	if (virt_xy_i[1] >= WALL_SIZE)
@@ -77,7 +77,7 @@ void	move_forward(t_player *player, int **map)
 	const double	rad = player->dir * (M_PI / 180.0);
 	const float		*virt_xy_i = set_virt_xy(player, rad);
 
-	if (check_x_colition(virt_xy_i[0], map, player))
+	if (check_x_collision(virt_xy_i[0], map, player))
 		return ;
 	player->virtual_x += STEP_SIZE * cos(rad);
 	if (virt_xy_i[1] >= WALL_SIZE)
