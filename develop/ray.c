@@ -1,7 +1,9 @@
 #include "cub3d.h"
 
-// Calculates the distance from the player's position to the nearest wall along a given angle.
-// Store the hit position along the axis perpendicular to the last detected wall.
+//->Calculates the distance from the player's position
+//to the nearest wall along a given angle.
+//->Store the hit position along the axis perpendicular
+//to the last detected wall.
 float	ft_get_ray_dist(double angle, t_player *player, int **map)
 {
 	float	dist;
@@ -30,7 +32,8 @@ float	ft_get_ray_dist(double angle, t_player *player, int **map)
 	return (dist);
 }
 
-// Casts a ray at a given angle and returns the detected wall's information.
+//Casts a ray at a given angle
+//and returns the detected wall's information.
 t_fov	ft_get_ray(double angle, t_player *player, int **map)
 {
 	t_fov	ray;

@@ -1,6 +1,7 @@
 #include "cub3d.h"
 
-// Calculates the height of a vertical wall slice to be drawn at a given screen column (x).
+//Calculates the height of a vertical wall slice to be drawn
+//at a given screen column (x).
 int	get_line_height(int x, t_player *player)
 {
 	const float	angle_offset = (x - (FOV_WIDTH / 2))

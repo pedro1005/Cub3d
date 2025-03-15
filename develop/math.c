@@ -1,6 +1,7 @@
 #include "cub3d.h"
 
-// Calculates the distance to the nearest wall in the first quadrant (0° to 90°).
+// Calculates the distance to the nearest wall
+//in the first quadrant (0° to 90°).
 float	calc_q_one(double angle, t_player *player, int **map, t_xypos *pos)
 {
 	float			xy_dist[2];
@@ -29,7 +30,8 @@ float	calc_q_one(double angle, t_player *player, int **map, t_xypos *pos)
 	return (0);
 }
 
-// Calculates the distance to the nearest wall in the second quadrant (90° to 180°).
+// Calculates the distance to the nearest wall
+//in the second quadrant (90° to 180°).
 float	calc_q_two(double angle, t_player *player, int **map, t_xypos *pos)
 {
 	float			xy_dist[2];
@@ -58,7 +60,8 @@ float	calc_q_two(double angle, t_player *player, int **map, t_xypos *pos)
 	return (0);
 }
 
-// Calculates the distance to the nearest wall in the third quadrant (180° to 270°).
+// Calculates the distance to the nearest wall
+//in the third quadrant (180° to 270°).
 float	calc_q_three(double angle, t_player *player, int **map, t_xypos *pos)
 {
 	float			xy_dist[2];
@@ -87,7 +90,8 @@ float	calc_q_three(double angle, t_player *player, int **map, t_xypos *pos)
 	return (0);
 }
 
-// Calculates the distance to the nearest wall in the fourth quadrant (270° to 360°).
+// Calculates the distance to the nearest wall
+//in the fourth quadrant (270° to 360°).
 float	calc_q_four(double angle, t_player *player, int **map, t_xypos *pos)
 {
 	float			xy_dist[2];
@@ -116,7 +120,8 @@ float	calc_q_four(double angle, t_player *player, int **map, t_xypos *pos)
 	return (0);
 }
 
-// Handles special cases where the ray is exactly aligned with cardinal directions (0°, 90°, 180°, 270°).
+// Handles special cases where the ray is aligned
+//with cardinal directions (0°, 90°, 180°, 270°).
 float	calc_notables(double angle, t_player *player, int **map, t_xypos *pos)
 {
 	float		dist;
