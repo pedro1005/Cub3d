@@ -57,8 +57,8 @@ void	draw_window(t_game *game, t_player *player)
 	int			x;
 
 	x = 0;
-	draw_sky(game, SKY_COLOR);
-	draw_floor(game, FLOOR_COLOR);
+	draw_sky(game, game->tex_values->c_hexa);
+	draw_floor(game, game->tex_values->f_hexa);
 	while (x < FOV_WIDTH)
 	{
 		line_height = get_line_height(x, player);
