@@ -45,7 +45,6 @@ int	main(int ac, char **av)
 {
 	t_game		*game;
 	t_player	*player;
-	int			**map;
 
 	if (ac != 2 || !check_filename(av[1]))
 	{
@@ -63,10 +62,9 @@ int	main(int ac, char **av)
 	parser(av[1], game);
 	graph_handler(game);
 	//get_map_size(av[1], game);
-	map = alloc_map(game->map_rows, game->map_cols);
-	populate_map(av[1], map);
-	ft_player_init(player, map);
-	game->map = map;
+	game->map = alloc_map(game);
+	populate_map(game->map_str,game);
+	ft_player_init(player, game->map);
 	memset(game->keys, 0, sizeof(game->keys));
 	draw_window(game, game->player);
 	mlx_hook(game->win, 2, 1L<<0, key_press, game);

@@ -16,19 +16,31 @@ void	map_insertion(int *matrix_row, char *line)
 	free(nbrs);
 }
 
-void    populate_map(char *input, int **map)
+void    populate_map(char *str, t_game *g)
 {
-    int fd = open(input, O_RDONLY);
-	int i = 0;
-    char *line;
-	while (1)
+	int	x;
+	int	y;
+
+	x = 0;
+	y = 0;
+	while (*str)
 	{
-		line = get_next_line(fd);
-		if (!line)
-			break ;
-		map_insertion(map[i], line);
-		free(line);
-		i++;
+		while (*str && *str != '-')
+		{
+			if (*str == '1' || *str == ' ')
+				g->map[y][x] = 1;
+			else
+				g->map[y][x] = 0;
+			printf("%d", g->map[y][x]);
+			x++;
+			str++;
+		}
+		if (*str == '-')
+			str++;
+		x = 0;
+		y++;
+		printf("\n");
 	}
-	close(fd);
+
+    
 }

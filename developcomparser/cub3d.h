@@ -150,7 +150,7 @@ typedef struct s_xypos
 //void	print_map(int **map, int rows, int cols);
 //void	expand_map(int **new_map, int **map);
 void	free_map(int **map, int rows);
-int		**alloc_map(int rows, int cols);
+int		**alloc_map(t_game *game);
 int		get_ylen(int **map);
 int		get_xlen(int **map);
 
@@ -211,7 +211,7 @@ void    get_map_size(char *file_name, t_game *game);
 size_t	ft_strlen(const char *str);
 char	*get_next_line(int fd);
 void	map_insertion(int *matrix_row, char *line);
-void    populate_map(char *input, int **map);
+void    populate_map(char *str, t_game *g);
 
 //player
 void    move_right(t_player *player, int **map);

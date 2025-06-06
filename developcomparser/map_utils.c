@@ -29,24 +29,24 @@ int get_ylen(int **map)
     return (res);
 }
 
-int **alloc_map(int rows, int cols)
+int **alloc_map(t_game *g)
 {
-    int **map = malloc((rows + 1) * sizeof(int *));         // Allocate space for `rows` pointers
+    int **map = malloc((g->map_rows + 1) * sizeof(int *));         // Allocate space for `rows` pointers
     if (!map)
         return (NULL);
-    for (int i = 0; i < rows; i++)
+    for (size_t i = 0; i < g->map_rows; i++)
     {
-        map[i] = malloc((cols + 1) * sizeof(int));
+        map[i] = malloc((g->map_cols + 1) * sizeof(int));
         if (!map[i])                                        // Free previously allocated rows if malloc fails
         {                              
-            for (int k = 0; k < i; k++)
+            for (size_t k = 0; k < i; k++)
                 free(map[k]);
             free(map);
             return (NULL);
         }
-        memset(map[i], 0, (cols + 1) * sizeof(int));        // Initialize each row to 0
+        memset(map[i], 0, (g->map_cols + 1) * sizeof(int));        // Initialize each row to 0
     }
-    map[rows] = NULL;                                       // NULL terminate the array of pointers
+    map[g->map_rows] = NULL;                                       // NULL terminate the array of pointers
     return (map);
 }
 
