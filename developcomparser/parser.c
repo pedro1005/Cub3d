@@ -42,15 +42,15 @@ static void     config_line_parser(t_game *g)
         tex_path_len = ft_strlen(g->tex_path_in);
         if (!ft_strncmp(g->tex_path_in, "NO ", 3) && tex_path_len > 7)
                 tex_parser(g, 'n');
-        if (!ft_strncmp(g->tex_path_in, "SO ", 3) && tex_path_len > 7)
+        else if (!ft_strncmp(g->tex_path_in, "SO ", 3) && tex_path_len > 7)
                 tex_parser(g,'s');
-        if (!ft_strncmp(g->tex_path_in, "WE ", 3) && tex_path_len > 7)
+        else if (!ft_strncmp(g->tex_path_in, "WE ", 3) && tex_path_len > 7)
                 tex_parser(g, 'w');
-        if (!ft_strncmp(g->tex_path_in, "EA ", 3) && tex_path_len > 7)
+        else if (!ft_strncmp(g->tex_path_in, "EA ", 3) && tex_path_len > 7)
                 tex_parser(g, 'e');
-        if (!ft_strncmp(g->tex_path_in, "F ", 2) && tex_path_len > 6)
+        else if (!ft_strncmp(g->tex_path_in, "F ", 2) && tex_path_len > 6)
                 coulor_parser(g, 'f');
-        if (!ft_strncmp(g->tex_path_in, "C ", 2) && tex_path_len > 6)
+        else if (!ft_strncmp(g->tex_path_in, "C ", 2) && tex_path_len > 6)
                 coulor_parser(g, 'c');
         else if (g->tex_path_in)
 		ft_error_exit(g, "Invalid config\n");
@@ -104,6 +104,7 @@ void    file_parser(char *input, t_game *g)
                 lines_parser(g, trimmed);
                 line = get_next_line(g->fd);
         }
+        printf("%s\n", g->map_str);
         //valgrind p ver se o free do get_next_line foi feito
         map_parser(g);
 }

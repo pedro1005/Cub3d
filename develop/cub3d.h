@@ -182,6 +182,7 @@ void    move_forward(t_player *player, int **map);
 float	*set_virt_xy(t_player *player, double rad);
 double	get_rad(int dir, int key);
 int	check_x_collision(float virt_x, int **map, t_player *player);
+void	ft_sleep(unsigned int mlseconds);
 
 int	ft_atoi(const char *nptr);
 char	**ft_split(char const *s, char c);

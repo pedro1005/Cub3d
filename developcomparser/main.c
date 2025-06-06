@@ -4,7 +4,6 @@ void	ft_player_init(t_player *player, int **map)
 {
 	player->pos_x = 1;
 	player->pos_y = 5;
-	player->dir = 0;
 	player->virtual_x = player->pos_x * WALL_SIZE + (WALL_SIZE / 2);
 	player->virtual_y = player->pos_y * WALL_SIZE + (WALL_SIZE / 2);
 	player->last_hit = 0;
@@ -36,17 +35,17 @@ void	graph_handler(t_game *game)
 	game->img.ptr = mlx_new_image(game->mlx, FOV_WIDTH, FOV_HEIGHT);
 	game->img.addr = mlx_get_data_addr(game->img.ptr, &game->img.bits_per_pixel,
 			&game->img.line_length, &game->img.endian);
-	game->textures[0] = load_texture(game->mlx, "./textures/paint.xpm");
-	game->textures[1] = load_texture(game->mlx, "./textures/paint2.xpm");
-	game->textures[2] = load_texture(game->mlx, "./textures/paint3.xpm");
-	game->textures[3] = load_texture(game->mlx, "./textures/paint4.xpm");
+	game->textures[0] = load_texture(game->mlx, game->tex_values->no);
+	game->textures[1] = load_texture(game->mlx, game->tex_values->so);
+	game->textures[2] = load_texture(game->mlx, game->tex_values->ea);
+	game->textures[3] = load_texture(game->mlx, game->tex_values->we);
 }
 
 int	main(int ac, char **av)
 {
 	t_game		*game;
 	t_player	*player;
-	//int			**map;
+	int			**map;
 
 	if (ac != 2 || !check_filename(av[1]))
 	{
@@ -58,16 +57,16 @@ int	main(int ac, char **av)
 		exit(1);
 	ft_memset(game, 0, sizeof(game));
 	player = (t_player *)malloc(sizeof(t_player));
+	game->player = player;
 	if (!player)
 		exit(1);
 	parser(av[1], game);
-	/*graph_handler(game);
-	get_map_size(av[1], game);
+	graph_handler(game);
+	//get_map_size(av[1], game);
 	map = alloc_map(game->map_rows, game->map_cols);
 	populate_map(av[1], map);
 	ft_player_init(player, map);
 	game->map = map;
-	game->player = player;
 	memset(game->keys, 0, sizeof(game->keys));
 	draw_window(game, game->player);
 	mlx_hook(game->win, 2, 1L<<0, key_press, game);
@@ -75,5 +74,5 @@ int	main(int ac, char **av)
 	mlx_hook(game->win, 17, 0, close_window, game);
     mlx_loop_hook(game->mlx, key_hook, game);
 	mlx_loop(game->mlx);
-	return (0);*/
+	return (0);
 }

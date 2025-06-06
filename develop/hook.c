@@ -45,17 +45,17 @@ int	key_hook(t_game *game)
 	if (game->keys[KEY_ESC])
 		close_window(game);
 	else if (game->keys[KEY_FW])
-		move_forward(game->player, game->map);
+		move_forward(game->player, game->map), ft_sleep(0);
 	else if (game->keys[KEY_BCK])
-		move_backward(game->player, game->map);
+		move_backward(game->player, game->map), ft_sleep(0);
 	else if (game->keys[KEY_ROTATE_L])
-		game->player->dir += 1;
+		game->player->dir += 1, ft_sleep(10);
 	else if (game->keys[KEY_ROTATE_R])
-		game->player->dir -= 1;
+		game->player->dir -= 1, ft_sleep(10);
 	else if (game->keys[KEY_L])
-		move_left(game->player, game->map);
+		move_left(game->player, game->map), ft_sleep(0);
 	else if (game->keys[KEY_R])
-		move_right(game->player, game->map);
+		move_right(game->player, game->map), ft_sleep(0);
 	if (game->player->dir > 360)
 			game->player->dir -= 360;
 	else if (game->player->dir < 0)

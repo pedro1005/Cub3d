@@ -49,6 +49,7 @@ void    set_tex(t_game *g, char w, int i)
                 if (!g->tex_values->so)
                         g->tex_values->nbr_of_tex_set += 1;
                 g->tex_values->so = ft_strdup(g->tex_path_in + i);
+				printf("%s\n", g->tex_values->so);
         }
         if (w == 'w')
         {

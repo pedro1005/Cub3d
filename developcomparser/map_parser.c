@@ -22,16 +22,29 @@ static void	get_data(t_game *g, char *line)
 	}
 }
 
+int	get_dir(char c)
+{
+	if (c == 'N')
+		return (90);
+	else if (c == 'S')
+		return (270);
+	else if (c == 'W')
+		return (180);
+	else if (c == 'E')
+		return (0);
+	return (1);
+	
+}
+
 bool	val_map_set_player(t_game *g, char c)
 {
 	if (ft_strchr(" 01NSEW", c))
 	{
 		if (ft_isalpha(c))
 		{
-            //testar g->player->dir
 			if (g->player->dir != 0)
 				return (false);
-			g->player->dir = c;
+			g->player->dir = get_dir(c);
 		}
 		return (true);
 	}
