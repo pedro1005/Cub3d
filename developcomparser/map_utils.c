@@ -1,34 +1,5 @@
 #include "cub3d.h"
 
-int get_xlen(int **map)
-{
-    int res;
-    int i;
-
-    res = 0;
-    i = 0;
-    if (!map)                           // Check if map is NULL
-        return (0);
-    while (map[i])                      // Iterate through the map while both map[i] and map[i][0] are valid
-    {
-        res++;
-        i++;
-    }
-    return (res);
-}
-
-int get_ylen(int **map)
-{
-    int res;
-
-    res = 0;
-    if (!map || !map[0])
-        return (0);
-    while (map[0][res] != 0)           // Count elements in the first row (assuming map is properly alloc). This assumes all values are initialized, but it the bounds should be checked.
-        res++;
-    return (res);
-}
-
 int **alloc_map(t_game *g)
 {
     int **map = malloc((g->map_rows + 1) * sizeof(int *));         // Allocate space for `rows` pointers
@@ -57,20 +28,6 @@ void free_map(int **map, int rows)
     free(map);
 }
 
-void expand_map(int **new_map, int **map)
-{
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
-            int value = map[i][j];
-            for (int r = i * WALL_SIZE; r < (i + 1) * WALL_SIZE; r++) {
-                for (int c = j * WALL_SIZE; c < (j + 1) * WALL_SIZE; c++) {
-                    new_map[r][c] = value;
-                }
-            }
-        }
-    }
-}
-
 void print_map(int **map, int rows, int cols) {
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
@@ -82,34 +39,3 @@ void print_map(int **map, int rows, int cols) {
         printf("\n");
     }
 }
-
-/*void enum_walls(int **map)
-{
-    int x;
-    int y;
-
-    if (!map)
-        return;
-
-    y = 0;
-    while (map[y])
-    {
-        x = 0;
-        while (map[y][x] != '\0') // Assuming '\0' marks the end of the row
-        {
-            if (map[y][x] == 1) // Only process if it's a wall
-            {
-                if (map[y + 1] && map[y + 1][x] == 0)
-                    map[y][x] = S_WALL;
-                else if (map[y][x + 1] && map[y][x + 1] == 0)
-                    map[y][x] = E_WALL;
-                else if (y > 0 && map[y - 1] && map[y - 1][x] == 0)
-                    map[y][x] = N_WALL;
-                else if (x > 0 && map[y][x - 1] == 0)
-                    map[y][x] = W_WALL;
-            }
-            x++;
-        }
-        y++;
-    }
-}*/

@@ -5,8 +5,6 @@
 #  define BUFFER_SIZE 5 
 # endif
 
-#define ROWS 7
-#define COLS 7
 #define WALL_SIZE 64
 #define STEP_SIZE WALL_SIZE / 50
 #define	FOV_ANGLE 60
@@ -14,8 +12,6 @@
 #define FOV_HEIGHT 600
 #define RED_COLOR "\033[31m"
 #define RESET_COLOR "\033[0m"
-#define SKY_COLOR 0x87CEEB
-#define FLOOR_COLOR 0x013220
 
 #include <stdio.h>
 #include <math.h>
