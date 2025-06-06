@@ -43,7 +43,7 @@ static void	validate_map_sur(t_game *g, char **map, size_t col, size_t row)
 		|| (map[row][col + 1] && !ft_strchr(" 1", map[row][col + 1])) \
 		|| (map[row + 1][col - 1] && !ft_strchr(" 1", map[row + 1][col - 1])) \
 		|| (map[row + 1][col] && !ft_strchr(" 1", map[row + 1][col])) \
-		|| (map[row + 1][col + 1] && !ft_strchr(" 1", map[col + 1][col + 1])))
+		|| (map[row + 1][col + 1] && !ft_strchr(" 1", map[row + 1][col + 1])))
 			ft_error_exit(g, "Map invalid\n");
 	}
 	else if (map[row][col] == '0')

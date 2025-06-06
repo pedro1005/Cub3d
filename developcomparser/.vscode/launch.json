@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/cub3d", // Replace with your executable name
-            "args": ["../maps/valid/basic.cub"],
+            "args": ["../maps/valid/subject.cub"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

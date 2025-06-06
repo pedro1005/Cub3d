@@ -1,13 +1,35 @@
 #include "cub3d.h"
 
-void	ft_player_init(t_player *player, int **map)
+void	set_pos(t_player *p, char *str)
 {
-	player->pos_x = 1;
-	player->pos_y = 5;
+	p->pos_x = 0;
+	p->pos_y = 0;
+
+	if (!str)
+		return;
+	while (*str)
+	{
+		while (*str && *str != '-')
+		{
+			if (ft_isalpha(*str))
+				return ;
+			p->pos_x++;
+			str++;
+		}
+		if (*str == '-')
+			str++;
+		p->pos_x = 0;
+		p->pos_y++;
+	}
+}
+
+void	ft_player_init(t_player *player, t_game *g)
+{
+	set_pos(player, g->map_str);
 	player->virtual_x = player->pos_x * WALL_SIZE + (WALL_SIZE / 2);
 	player->virtual_y = player->pos_y * WALL_SIZE + (WALL_SIZE / 2);
 	player->last_hit = 0;
-	ft_build_fov(player, map);
+	ft_build_fov(player, g->map);
 }
 
 void	clear_image(t_game *game, int color)
@@ -64,7 +86,7 @@ int	main(int ac, char **av)
 	//get_map_size(av[1], game);
 	game->map = alloc_map(game);
 	populate_map(game->map_str,game);
-	ft_player_init(player, game->map);
+	ft_player_init(player, game);
 	memset(game->keys, 0, sizeof(game->keys));
 	draw_window(game, game->player);
 	mlx_hook(game->win, 2, 1L<<0, key_press, game);

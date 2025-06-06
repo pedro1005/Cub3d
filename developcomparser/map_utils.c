@@ -28,7 +28,7 @@ void free_map(int **map, int rows)
     free(map);
 }
 
-void print_map(int **map, int rows, int cols) {
+/*void print_map(int **map, int rows, int cols) {
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             if (map[i][j] == 5)
@@ -38,4 +38,4 @@ void print_map(int **map, int rows, int cols) {
         }
         printf("\n");
     }
-}
+}*/
