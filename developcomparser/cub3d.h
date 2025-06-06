@@ -10,8 +10,6 @@
 #define	FOV_ANGLE 60
 #define	FOV_WIDTH 800
 #define FOV_HEIGHT 600
-#define RED_COLOR "\033[31m"
-#define RESET_COLOR "\033[0m"
 
 #include <stdio.h>
 #include <math.h>
@@ -39,8 +37,8 @@ typedef struct s_win
 
 typedef struct s_img
 {
-    void    *ptr;  // Pointer to the MLX image
-    char    *addr; // Address of image data
+    void    *ptr;
+    char    *addr;
     int     bits_per_pixel;
     int     line_length;
     int     endian;
@@ -48,17 +46,12 @@ typedef struct s_img
 
 typedef struct s_player
 {
-	//player's position in original grid
 	int		pos_x;
 	int		pos_y;
-	//player's virtual position
 	float		virtual_x;
 	float		virtual_y;
-	//player's direction
 	int		dir;
-	//Field of view (FOV)
 	struct s_fov	plane[FOV_WIDTH];
-	//last ray hit (enum t_walltexture)
 	int		last_hit;
 	float		pos_hit;
 	
@@ -117,13 +110,13 @@ typedef enum e_keys
 } t_keys;
 
 typedef struct s_texture {
-    void    *img;       // Ponteiro para a imagem carregada pelo mlx
-    int     *data;      // Pixels da imagem
-    int     width;      // Largura da textura
-    int     height;     // Altura da textura
-    int     bpp;        // Bits por pixel
-    int     size_line;  // Tamanho da linha em bytes
-    int     endian;     // Endianess da imagem
+    void    *img;
+    int     *data;
+    int     width;
+    int     height;
+    int     bpp;
+    int     size_line;
+    int     endian;
 } t_texture;
 
 typedef struct s_wall_data
@@ -143,8 +136,6 @@ typedef struct s_xypos
 
 
 //map_utils
-//void	print_map(int **map, int rows, int cols);
-//void	expand_map(int **new_map, int **map);
 void	free_map(int **map, int rows);
 int		**alloc_map(t_game *game);
 int		get_ylen(int **map);
