@@ -37,8 +37,8 @@ void	graph_handler(t_game *game)
 			&game->img.line_length, &game->img.endian);
 	game->textures[0] = load_texture(game->mlx, game->tex_values->no);
 	game->textures[1] = load_texture(game->mlx, game->tex_values->so);
-	game->textures[2] = load_texture(game->mlx, game->tex_values->ea);
-	game->textures[3] = load_texture(game->mlx, game->tex_values->we);
+	game->textures[2] = load_texture(game->mlx, game->tex_values->we);
+	game->textures[3] = load_texture(game->mlx, game->tex_values->ea);
 }
 
 int	main(int ac, char **av)

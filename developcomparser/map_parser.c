@@ -31,7 +31,7 @@ int	get_dir(char c)
 	else if (c == 'W')
 		return (180);
 	else if (c == 'E')
-		return (0);
+		return (360);
 	return (1);
 	
 }
