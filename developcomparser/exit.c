@@ -3,8 +3,9 @@
 
 void	free_pntr(void *mem)
 {
-	if (mem)
+	if (mem != NULL)
 		free (mem);
+	mem = NULL;
 }
 
 void	free_game(t_game *g)
@@ -22,6 +23,10 @@ void	free_game(t_game *g)
 	free(g->tex_values);
 	free(g->map_str);
 	free(g->tex_path_in);
+	int i = 0;
+	while (g->mapchar[i])
+		free(g->mapchar[i++]);
+	free(g->mapchar);
 	get_next_line(-3);
 }
 
@@ -54,6 +59,7 @@ void	ft_exit(t_game *g, char *msg, int exitnbr)
     }
     if (msg)
 		ft_putstr_fd(msg, (exitnbr + 1));
-    free_game(g);
+    //free_game(g);
+	close_window(g);
 	exit (exitnbr);
 }

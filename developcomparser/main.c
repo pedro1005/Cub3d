@@ -76,11 +76,12 @@ int	main(int ac, char **av)
 	game = (t_game *)malloc(sizeof(t_game));
 	if (!game)
 		exit(1);
-	ft_memset(game, 0, sizeof(game));
+	ft_memset(game, 0, sizeof(*game));
 	player = (t_player *)malloc(sizeof(t_player));
 	game->player = player;
 	if (!player)
 		exit(1);
+	ft_memset(player, 0, sizeof(*player));
 	parser(av[1], game);
 	graph_handler(game);
 	//get_map_size(av[1], game);

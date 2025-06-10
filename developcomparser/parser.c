@@ -2,9 +2,10 @@
 
 static void	tex_init(t_game *g)
 {
-         g->tex_values = malloc(sizeof(t_tex_flags));
+        g->tex_values = malloc(sizeof(t_tex_flags));
         if (!g->tex_values)
                 return ;
+        ft_memset(g->tex_values, 0, sizeof(*(g->tex_values)));
 	g->tex_values->no = NULL;
         g->tex_values->so = NULL;
         g->tex_values->we = NULL;
@@ -21,18 +22,19 @@ bool	tex_and_coulors_ready(t_game *g)
 	return (false);
 }
 
-static void     map_row_parser(t_game *g, char *line)
+static void map_row_parser(t_game *g, char **line)
 {
-        if ((line[0] == ' ' || line[0] == '1') && tex_and_coulors_ready(g))
-        {
-                get_map(g, line);
-                g->map_rows++;
-        }
-        else
-        {
-                free(line);
-                missing_text_color(g);
-        }
+    if (((*line)[0] == ' ' || (*line)[0] == '1') && tex_and_coulors_ready(g))
+    {
+        get_map(g, *line);
+        g->map_rows++;
+    }
+    else
+    {
+        free(*line);
+        *line = NULL;
+        missing_text_color(g);
+    }
 }
 
 static void     config_line_parser(t_game *g)
@@ -74,7 +76,7 @@ static void     lines_parser(t_game *g, char *t_line)
                 ft_error_exit(g, "Empty line in input");
         }
         else if (!empty_line(t_line))
-                map_row_parser(g, t_line);
+                map_row_parser(g, &t_line);
         free_pntr(t_line);
 }
 
@@ -94,8 +96,11 @@ void    file_parser(char *input, t_game *g)
         char    *trimmed;
 
         g->fd = open(input, O_RDONLY);
+        trimmed = NULL;
         if (g->fd < 0)
-                ft_exit(g, "File cannot be opened\n", 0);
+                //exit(1);
+                close_window(g);
+                //ft_exit(g, "File cannot be opened\n", 0);
         line = get_next_line(g->fd);
         while (line)
         {
@@ -104,7 +109,6 @@ void    file_parser(char *input, t_game *g)
                 lines_parser(g, trimmed);
                 line = get_next_line(g->fd);
         }
-        printf("%s\n", g->map_str);
         //valgrind p ver se o free do get_next_line foi feito
         map_parser(g);
 }
