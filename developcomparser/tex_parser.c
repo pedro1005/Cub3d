@@ -32,8 +32,9 @@ void	missing_text_color(t_game *g)
 {
 	close (g->fd);
 	if (!tex_and_coulors_ready(g))
-		printf( "Color or texture missing\n free g");
-	printf( "Color or texture missing\n free g");
+		return ;
+		//printf( "Color or texture missing\n free g");
+	//printf( "Color or texture missing\n free g");
 }
 
 void    set_tex(t_game *g, char w, int i)
@@ -49,7 +50,7 @@ void    set_tex(t_game *g, char w, int i)
                 if (!g->tex_values->so)
                         g->tex_values->nbr_of_tex_set += 1;
                 g->tex_values->so = ft_strdup(g->tex_path_in + i);
-				printf("%s\n", g->tex_values->so);
+				//printf("%s\n", g->tex_values->so);
         }
         if (w == 'w')
         {
@@ -71,15 +72,15 @@ void    tex_parser(t_game *g, char wall)
         int     i;
 
         if (tex_exists(g, wall))
-                ft_error_exit(g, "Textura invalida");
+                ft_error_exit(g, "Duplicated texture\n");
         i = 3;
         while (g->tex_path_in[i] && ft_isspace(g->tex_path_in[i]))
                 i++;
         if (!is_xpm_file(g, i))
-                ft_error_exit(g, ".xpm invalido");
+                ft_error_exit(g, ".xpm invalido\n");
         fd_tex = open(g->tex_path_in + i, O_RDONLY);
         if (fd_tex < 0)
-                ft_error_exit(g, "Textura invalida");
+                ft_error_exit(g, "Invalid texture\n");
         close(fd_tex);
         set_tex(g, wall, i);
 }
@@ -134,17 +135,17 @@ static void	rgb_parser(t_game *g, int i, char fc)
 		while (g->tex_path_in[i] && ft_isspace(g->tex_path_in[i]))
 			i++;
 		if (!ft_isdigit(g->tex_path_in[i]))
-			ft_error_exit(g, "Invalid coulor. free g\n");
+			ft_error_exit(g, "Invalid coulor\n");
 		while (g->tex_path_in[i] && ft_isdigit(g->tex_path_in[i]))
 			rgb[j] = rgb[j] * 10 + (g->tex_path_in[i++] - 48);
 		if (!is_valid_coulor(g, &i, j, rgb[j]))
-			ft_error_exit(g, "Invalid coulor. free g\n");
+			ft_error_exit(g, "Invalid coulor\n");
 		j++;
 		if (j == 3 && g->tex_path_in[i])
-			ft_error_exit(g, "Invalid color. free g\n");
+			ft_error_exit(g, "Invalid color\n");
 	}
 	if (j != 3)
-		ft_error_exit(g, "Invalid color. free g\n");
+		ft_error_exit(g, "Invalid color\n");
 	coulor_hexa(g, rgb, fc);
 }
 
@@ -152,9 +153,12 @@ void    coulor_parser(t_game *g, char fc_coulor)
 {
         int     i;
 
-        if ((g->tex_values->c && fc_coulor == 'c') || (g->tex_values->f && fc_coulor == 'f'))
-                printf("Coulor already defined");
-        i = 2;
+        if ((g->tex_values->c_hexa && fc_coulor == 'c') || (g->tex_values->f_hexa && fc_coulor == 'f'))
+		{
+			printf("Error\nColor duplicated\n");
+			close_window(g);
+		}
+		i = 2;
         while (g->tex_path_in[i] && ft_isspace(g->tex_path_in[i]))
                 i++;
         rgb_parser(g, i, fc_coulor);

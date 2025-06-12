@@ -70,7 +70,7 @@ int	main(int ac, char **av)
 
 	if (ac != 2 || !check_filename(av[1]))
 	{
-		printf("Error");
+		printf("Error\nInvalid args\n");
 		return (1);
 	}
 	game = (t_game *)malloc(sizeof(t_game));

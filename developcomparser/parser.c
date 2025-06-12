@@ -60,6 +60,9 @@ static void     config_line_parser(t_game *g)
 
 static void     lines_parser(t_game *g, char *t_line)
 {
+        //char    *next_line;
+
+        //next_line = NULL;
         g->tex_path_in = NULL;
         if (ft_strchr(t_line, '.') || ft_strchr(t_line, ','))
         {
@@ -72,8 +75,21 @@ static void     lines_parser(t_game *g, char *t_line)
                 free (g->tex_path_in);
         else if (empty_line(t_line) && g->map_rows > 0)
         {
-                free(t_line);
-                ft_error_exit(g, "Empty line in input");
+                //next_line = get_next_line(g->fd);
+                //while (next_line)
+                //{
+                //        free(next_line);
+                //        next_line = NULL;
+                //        next_line = get_next_line(g->fd);
+                //        if (next_line && !ft_isspace(next_line[0]))
+                //        {
+                                free(t_line);
+                //                free(next_line);
+                                ft_error_exit(g, "Empty line in map\n");
+                        //}
+                        
+                //}
+                
         }
         else if (!empty_line(t_line))
                 map_row_parser(g, &t_line);
@@ -83,7 +99,7 @@ static void     lines_parser(t_game *g, char *t_line)
 void	map_parser(t_game *g)
 {
 	if (!g->map_str)
-		ft_error_exit(g, "Map error\n");
+		ft_error_exit(g, "File configuration error\n");
 	g->mapchar = ft_split(g->map_str, '-');
 	if (g->player->dir == 0)
 		ft_exit(g, "Not initialized player\n", 0);
