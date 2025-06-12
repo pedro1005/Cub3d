@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedmonte <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 17:52:59 by pedmonte          #+#    #+#             */
+/*   Updated: 2025/06/12 17:53:01 by pedmonte         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 static void	tex_init(t_game *g)
@@ -60,13 +72,15 @@ static void     config_line_parser(t_game *g)
 
 static void     lines_parser(t_game *g, char *t_line)
 {
-        //char    *next_line;
+        char    *temp;
 
-        //next_line = NULL;
+        temp = t_line;
         g->tex_path_in = NULL;
         if (ft_strchr(t_line, '.') || ft_strchr(t_line, ','))
         {
-                g->tex_path_in = ft_strtrim(t_line, "\r\t");
+                while (*temp == ' ')
+                        (temp)++;
+                g->tex_path_in = ft_strtrim(temp, "\r\t");
                 free(t_line);
                 t_line = NULL;
                 config_line_parser(g);
@@ -75,21 +89,18 @@ static void     lines_parser(t_game *g, char *t_line)
                 free (g->tex_path_in);
         else if (empty_line(t_line) && g->map_rows > 0)
         {
-                //next_line = get_next_line(g->fd);
-                //while (next_line)
-                //{
-                //        free(next_line);
-                //        next_line = NULL;
-                //        next_line = get_next_line(g->fd);
-                //        if (next_line && !ft_isspace(next_line[0]))
-                //        {
-                                free(t_line);
-                //                free(next_line);
-                                ft_error_exit(g, "Empty line in map\n");
-                        //}
-                        
-                //}
-                
+                while (t_line)
+                {
+                        free(t_line);
+                        t_line = get_next_line(g->fd);
+                        if (t_line && (t_line[0] != '\n' && t_line[0] != '\r'))
+                        {
+                              free(t_line);
+                              ft_error_exit(g, "Empty line in map\n");  
+                        }
+                }
+                free(t_line);
+                return ;
         }
         else if (!empty_line(t_line))
                 map_row_parser(g, &t_line);

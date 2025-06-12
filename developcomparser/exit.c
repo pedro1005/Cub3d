@@ -1,5 +1,16 @@
-#include "cub3d.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedmonte && gamado-x                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 17:15:40 by pedmonte          #+#    #+#             */
+/*   Updated: 2025/06/12 17:47:42 by pedmonte         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "cub3d.h"
 
 void	free_pntr(void *mem)
 {
@@ -10,12 +21,12 @@ void	free_pntr(void *mem)
 
 void	free_game(t_game *g)
 {
+	int	i;
+
+	i = 0;
 	if (!g)
 		return ;
 	free(g->mlx);
-	//free(g->textures);
-	/*if (g->map)
-		free_map(g->map);*/
 	free(g->tex_values->no);
 	free(g->tex_values->so);
 	free(g->tex_values->we);
@@ -23,7 +34,6 @@ void	free_game(t_game *g)
 	free(g->tex_values);
 	free(g->map_str);
 	free(g->tex_path_in);
-	int i = 0;
 	while (g->mapchar[i])
 		free(g->mapchar[i++]);
 	free(g->mapchar);
@@ -53,13 +63,12 @@ void	ft_error_exit(t_game *g, char *msg)
 
 void	ft_exit(t_game *g, char *msg, int exitnbr)
 {
-    if (exitnbr == 0)
-    {
-        ft_putstr_fd("Error\n", (exitnbr + 1));
-    }
-    if (msg)
+	if (exitnbr == 0)
+	{
+		ft_putstr_fd("Error\n", (exitnbr + 1));
+	}
+	if (msg)
 		ft_putstr_fd(msg, (exitnbr + 1));
-    //free_game(g);
 	close_window(g);
 	exit (exitnbr);
 }

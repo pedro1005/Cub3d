@@ -9,7 +9,7 @@ OBJ       = $(SRC:.c=.o)
 OBJ_PATH  = ./objects/
 OBJS      = $(addprefix $(OBJ_PATH), $(OBJ))
 INC       = -I./mlx -I./
-NAME      = cub3d
+NAME      = cub3D
 
 # Rules
 all: $(OBJ_PATH) $(MLX) $(NAME)
