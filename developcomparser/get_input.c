@@ -28,7 +28,7 @@ void	map_insertion(int *matrix_row, char *line)
 	free(nbrs);
 }
 
-void    populate_map(char *str, t_game *g)
+void	populate_map(char *str, t_game *g)
 {
 	int	x;
 	int	y;
@@ -43,7 +43,6 @@ void    populate_map(char *str, t_game *g)
 				g->map[y][x] = 1;
 			else
 				g->map[y][x] = 0;
-			//printf("%d", g->map[y][x]);
 			x++;
 			str++;
 		}
@@ -51,8 +50,5 @@ void    populate_map(char *str, t_game *g)
 			str++;
 		x = 0;
 		y++;
-		//printf("\n");
 	}
-
-    
 }

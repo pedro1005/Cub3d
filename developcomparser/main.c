@@ -16,9 +16,8 @@ void	set_pos(t_player *p, char *str)
 {
 	p->pos_x = 0;
 	p->pos_y = 0;
-
 	if (!str)
-		return;
+		return ;
 	while (*str)
 	{
 		while (*str && *str != '-')
@@ -50,14 +49,18 @@ void	clear_image(t_game *game, int color)
 	int		y;
 	char	*pixel;
 
-	for (y = 0; y < FOV_HEIGHT; y++)
+	y = 0;
+	while (y < FOV_HEIGHT)
 	{
-		for (x = 0; x < FOV_WIDTH; x++)
+		x = 0;
+		while (x < FOV_WIDTH)
 		{
 			pixel = game->img.addr + (int)(y * game->img.line_length
 					+ x * (game->img.bits_per_pixel / 8));
 			*(unsigned int *)pixel = color;
+			x++;
 		}
+		y++;
 	}
 }
 
@@ -75,6 +78,22 @@ void	graph_handler(t_game *game)
 	game->textures[3] = load_texture(game->mlx, game->tex_values->ea);
 }
 
+void	loop_hook(t_game *game)
+{
+	mlx_hook(game->win, 2, 1L << 0, key_press, game);
+	mlx_hook(game->win, 3, 1L << 1, key_release, game);
+	mlx_hook(game->win, 17, 0, close_window, game);
+	mlx_loop_hook(game->mlx, key_hook, game);
+	mlx_loop(game->mlx);
+}
+
+void	alloc_game(t_game **game)
+{
+	*game = (t_game *)malloc(sizeof(t_game));
+	if (!game)
+		exit(1);
+}
+
 int	main(int ac, char **av)
 {
 	t_game		*game;
@@ -85,9 +104,8 @@ int	main(int ac, char **av)
 		printf("Error\nInvalid args\n");
 		return (1);
 	}
-	game = (t_game *)malloc(sizeof(t_game));
-	if (!game)
-		exit(1);
+	game = NULL;
+	alloc_game(&game);
 	ft_memset(game, 0, sizeof(*game));
 	player = (t_player *)malloc(sizeof(t_player));
 	game->player = player;
@@ -96,16 +114,11 @@ int	main(int ac, char **av)
 	ft_memset(player, 0, sizeof(*player));
 	parser(av[1], game);
 	graph_handler(game);
-	//get_map_size(av[1], game);
 	game->map = alloc_map(game);
-	populate_map(game->map_str,game);
+	populate_map(game->map_str, game);
 	ft_player_init(player, game);
 	memset(game->keys, 0, sizeof(game->keys));
 	draw_window(game, game->player);
-	mlx_hook(game->win, 2, 1L<<0, key_press, game);
-    mlx_hook(game->win, 3, 1L<<1, key_release, game);
-	mlx_hook(game->win, 17, 0, close_window, game);
-    mlx_loop_hook(game->mlx, key_hook, game);
-	mlx_loop(game->mlx);
+	loop_hook(game);
 	return (0);
 }

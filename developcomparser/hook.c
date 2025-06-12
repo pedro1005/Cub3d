@@ -69,9 +69,9 @@ int	key_hook(t_game *game)
 	else if (game->keys[KEY_R])
 		move_right(game->player, game->map);
 	if (game->player->dir > 360)
-			game->player->dir -= 360;
+		game->player->dir -= 360;
 	else if (game->player->dir < 0)
-			game->player->dir += 360;
+		game->player->dir += 360;
 	ft_build_fov(game->player, game->map);
 	mlx_clear_window(game->mlx, game->win);
 	draw_window(game, game->player);

@@ -211,30 +211,30 @@ char	*ft_strtrim(char const *s1, char const *set)
 	return (ft_substr(s1, start, (end - start)));
 }
 
-static int      charcmp(char c1, char c2)
+static int	charcmp(char c1, char c2)
 {
-        return ((unsigned char)c1 - (unsigned char)c2);
+	return ((unsigned char)c1 - (unsigned char)c2);
 }
 
-int     ft_strncmp(const char *s1, const char *s2, size_t n)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-        size_t  i;
+	size_t	i;
 
-        i = 0;
-        while (i < n && s1[i] && s2[i])
-        {
-                if (charcmp(s1[i], s2[i]) != 0)
-                        return (charcmp(s1[i], s2[i]));
-                i++;
-        }
-        if (i < n)
-                return (charcmp(s1[i], s2[i]));
-        return (0);
+	i = 0;
+	while (i < n && s1[i] && s2[i])
+	{
+		if (charcmp(s1[i], s2[i]) != 0)
+			return (charcmp(s1[i], s2[i]));
+		i++;
+	}
+	if (i < n)
+		return (charcmp(s1[i], s2[i]));
+	return (0);
 }
 
 void	*ft_memset(void *s, int c, size_t n)
 {
-	size_t			i;
+	size_t	i;
 
 	i = 0;
 	while (i < n)

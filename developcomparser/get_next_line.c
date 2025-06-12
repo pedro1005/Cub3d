@@ -79,7 +79,7 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || FOPEN_MAX < fd)
 		return (NULL);
-	line = NULL; 
+	line = NULL;
 	while (files_array[fd][0] || read(fd, files_array[fd], BUFFER_SIZE) > 0)
 	{
 		line = ft_strjoin_gnl(line, files_array[fd]);
