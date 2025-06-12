@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tex_parser_two.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedmonte <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 20:00:24 by pedmonte          #+#    #+#             */
+/*   Updated: 2025/06/12 20:00:28 by pedmonte         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "cub3d.h"
+
 static bool	is_valid_coulor(t_game *g, int *i, int j, int color)
 {
 	if (color < 0 || color > 255)
@@ -62,18 +76,18 @@ static void	rgb_parser(t_game *g, int i, char fc)
 	coulor_hexa(g, rgb, fc);
 }
 
-void    coulor_parser(t_game *g, char fc_coulor)
+void	coulor_parser(t_game *g, char fc_coulor)
 {
-        int     i;
+	int	i;
 
-        if ((g->tex_values->c_hexa && fc_coulor == 'c') || (g->tex_values->f_hexa && fc_coulor == 'f'))
-		{
-			printf("Error\nColor duplicated\n");
-			close_window(g);
-		}
-		i = 2;
-        while (g->tex_path_in[i] && ft_isspace(g->tex_path_in[i]))
-                i++;
-        rgb_parser(g, i, fc_coulor);
+	if ((g->tex_values->c_hexa && fc_coulor == 'c')
+		|| (g->tex_values->f_hexa && fc_coulor == 'f'))
+	{
+		printf("Error\nColor duplicated\n");
+		close_window(g);
+	}
+	i = 2;
+	while (g->tex_path_in[i] && ft_isspace(g->tex_path_in[i]))
+		i++;
+	rgb_parser(g, i, fc_coulor);
 }
-

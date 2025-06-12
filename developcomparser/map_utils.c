@@ -12,42 +12,53 @@
 
 #include "cub3d.h"
 
-int **alloc_map(t_game *g)
+void	alloc_map_rows(t_game *g, int **map)
 {
-    int **map = malloc((g->map_rows + 1) * sizeof(int *));         // Allocate space for `rows` pointers
-    if (!map)
-        return (NULL);
-    for (size_t i = 0; i < g->map_rows; i++)
-    {
-        map[i] = malloc((g->map_cols + 1) * sizeof(int));
-        if (!map[i])                                        // Free previously allocated rows if malloc fails
-        {                              
-            for (size_t k = 0; k < i; k++)
-                free(map[k]);
-            free(map);
-            return (NULL);
-        }
-        memset(map[i], 0, (g->map_cols + 1) * sizeof(int));        // Initialize each row to 0
-    }
-    map[g->map_rows] = NULL;                                       // NULL terminate the array of pointers
-    return (map);
+	size_t	i;
+	size_t	k;
+
+	i = 0;
+	k = 0;
+	while (i < g->map_rows)
+	{
+		map[i] = malloc((g->map_cols + 1) * sizeof(int));
+		if (!map[i])
+		{
+			k = 0;
+			while (k < i)
+			{
+				free(map[k]);
+				k++;
+			}
+			free(map);
+		}
+		ft_memset(map[i], 0, (g->map_cols + 1) * sizeof(int));
+		i++;
+	}
+	map[g->map_rows] = NULL;
 }
 
-void free_map(int **map, int rows)
+int	**alloc_map(t_game *g)
 {
-    for (int i = 0; i < rows; i++)
-        free(map[i]);
-    free(map);
+	int		**map;
+
+	map = NULL;
+	map = malloc((g->map_rows + 1) * sizeof(int *));
+	if (!map)
+		return (NULL);
+	alloc_map_rows(g, map);
+	return (map);
 }
 
-/*void print_map(int **map, int rows, int cols) {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            if (map[i][j] == 5)
-                printf(RED_COLOR "5 " RESET_COLOR);
-            else
-                printf("%d ", map[i][j]);
-        }
-        printf("\n");
-    }
-}*/
+void	free_map(int **map, int rows)
+{
+	int	i;
+
+	i = 0;
+	while (i < rows)
+	{
+		free(map[i]);
+		i++;
+	}
+	free(map);
+}

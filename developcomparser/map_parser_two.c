@@ -74,8 +74,8 @@ static void	validate_map_sur(t_game *g, char **map, size_t col, size_t row)
 
 void	map_validator(t_game *g)
 {
-    size_t     col;
-	size_t     row;
+	size_t	col;
+	size_t	row;
 	char	**map;
 
 	map = g->mapchar;
@@ -87,7 +87,8 @@ void	map_validator(t_game *g)
 		{
 			if (is_bounded(g, col, row))
 				check_bounds(g, map[row][col]);
-			else if (!is_bounded(g, col, row) && ft_strchr("NSEW", map[row][col]))
+			else if (!is_bounded(g, col, row)
+				&& ft_strchr("NSEW", map[row][col]))
 				validate_player_sur(g, map, col, row);
 			else if (!is_bounded(g, col, row) && ((map[row][col] == ' ') \
 				|| (map[row][col] == '0')))

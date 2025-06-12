@@ -74,3 +74,22 @@ void	set_tex(t_game *g, char w, int i)
 		g->tex_values->ea = ft_strdup(g->tex_path_in + i);
 	}
 }
+
+void	tex_parser(t_game *g, char wall)
+{
+	int	fd_tex;
+	int	i;
+
+	if (tex_exists(g, wall))
+		ft_error_exit(g, "Duplicated texture\n");
+	i = 3;
+	while (g->tex_path_in[i] && ft_isspace(g->tex_path_in[i]))
+		i++;
+	if (!is_xpm_file(g, i))
+		ft_error_exit(g, ".xpm invalido\n");
+	fd_tex = open(g->tex_path_in + i, O_RDONLY);
+	if (fd_tex < 0)
+		ft_error_exit(g, "Invalid texture\n");
+	close(fd_tex);
+	set_tex(g, wall, i);
+}

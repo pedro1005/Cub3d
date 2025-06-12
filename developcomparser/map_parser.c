@@ -45,7 +45,6 @@ int	get_dir(char c)
 	else if (c == 'E')
 		return (360);
 	return (1);
-	
 }
 
 bool	val_map_set_player(t_game *g, char c)

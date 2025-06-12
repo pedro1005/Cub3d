@@ -60,15 +60,3 @@ void	ft_error_exit(t_game *g, char *msg)
 		close (g->fd);
 	ft_exit(g, msg, 0);
 }
-
-void	ft_exit(t_game *g, char *msg, int exitnbr)
-{
-	if (exitnbr == 0)
-	{
-		ft_putstr_fd("Error\n", (exitnbr + 1));
-	}
-	if (msg)
-		ft_putstr_fd(msg, (exitnbr + 1));
-	close_window(g);
-	exit (exitnbr);
-}
